@@ -10,8 +10,23 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.baxter_academy.caal_g3.MainActivity">
 
+    <Button
+        android:text=""
+        android:layout_width="100pt"
+        android:layout_height="100pt"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:drawable="@drawable/startbutton"
+        android:background="@drawable/startbutton"
+        android:id="@+id/startbutton" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:text="Press the button to start tracking"
+        android:id="@+id/textView"
+        android:layout_below="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp" />
+
 </RelativeLayout>
