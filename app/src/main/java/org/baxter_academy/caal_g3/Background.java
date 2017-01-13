@@ -33,7 +33,7 @@ public class Background extends Service implements SensorEventListener {
         // sensor info
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer , SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -68,23 +68,21 @@ public class Background extends Service implements SensorEventListener {
         }
     }
 
+
     //FROM HERE DOWN IS JUST SENSOR REQUIREMENTS
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
-        /**
     }
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
+
+    public void onDestroy() {
+        Toast.makeText(this, "Stopped", Toast.LENGTH_SHORT).show(); // Pops up message
+        sensorManager.unregisterListener(this); // stops sensorManager
+        super.onDestroy();
     }
-    protected void onResume() {
-        super.onResume();
-        sensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-**/
-}
+
 /**
+  * experimental method
     private void getAccelerometer(SensorEvent event) {
         float[] values = event.values;
         // Movement
