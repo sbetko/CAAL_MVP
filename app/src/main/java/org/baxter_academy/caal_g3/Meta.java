@@ -26,18 +26,12 @@ public class Meta extends Service {
         Intent cleanerIntent = new Intent(this.getApplicationContext(), Cleaner.class);
 
         startService(readerIntent);
-        try {
-            Thread.sleep(1000*10);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        stopService(readerIntent);
-        startService(cleanerIntent);
+        //stopService(readerIntent); //TODO somehow understand when Reader is finished (broadcast? binding?)
+        //startService(cleanerIntent);
 
         // I don't want this service to stay in memory, so I stop it
         // immediately after doing what I wanted it to do.
         stopSelf();
-
         return START_NOT_STICKY;
     }
 
@@ -48,12 +42,16 @@ public class Meta extends Service {
 
     @Override
     public void onDestroy() {
-        // I want to restart this service again in one hour
+        System.out.println("Stopped Meta");
+        /**
+        // I want to restart this service again in 1 minute
         AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
         alarm.set(
                 alarm.RTC_WAKEUP,
                 System.currentTimeMillis() + (1000 * 60 * 1),
                 PendingIntent.getService(this, 0, new Intent(this, Meta.class), 0)
+
         );
+         **/
     }
 }

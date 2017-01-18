@@ -27,10 +27,10 @@ public class MainActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Intent mServiceIntent = new Intent(buttonView.getContext(), Reader.class);
+                    Intent mServiceIntent = new Intent(buttonView.getContext(), Meta.class);
                     startService(mServiceIntent);
                 } else {
-                    Intent mServiceIntent = new Intent(buttonView.getContext(), Reader.class);
+                    Intent mServiceIntent = new Intent(buttonView.getContext(), Meta.class);
                     stopService(mServiceIntent);
                 }
             }

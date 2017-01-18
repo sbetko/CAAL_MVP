@@ -25,6 +25,7 @@ import static org.baxter_academy.caal_g3.R.raw.randomforestbinarycfscsc20;
 
 public class WekaClassifier extends Service {
 
+    @Override
     public void onCreate() {
 
         /** ASSIGN / LOAD RESOURCES **/
@@ -73,8 +74,8 @@ public class WekaClassifier extends Service {
         // label instances
         for (int i = 0; i < unlabeled.numInstances(); i++) {
             assert cls != null;
-            double clsLabel = cls != null ? cls.classifyInstance(unlabeled.instance(i)) : null;
-            labeled.instance(i).setClassValue(clsLabel);
+            //double clsLabel = cls != null ? cls.classifyInstance(unlabeled.instance(i)) : null; // FIXME: 1/18/2017
+            //labeled.instance(i).setClassValue(clsLabel);
 
         }
 
@@ -129,7 +130,9 @@ public class WekaClassifier extends Service {
         //showResults.setText(toWrite);
     }
 
+    public void onDestroy() {
 
+    }
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
