@@ -19,7 +19,7 @@
         </activity>
 
         <service
-            android:name=".Background"
+            android:name=".Reader"
             android:enabled="true"
             android:exported="false"></service>
     </application>

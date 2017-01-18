@@ -11,7 +11,7 @@ import android.hardware.SensorManager;
 import android.widget.Toast;
 
 
-public class Background extends Service implements SensorEventListener {
+public class Reader extends Service implements SensorEventListener {
     // stuff for sensor calls
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -36,7 +36,6 @@ public class Background extends Service implements SensorEventListener {
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
-    @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
         float x = sensorEvent.values[0];
