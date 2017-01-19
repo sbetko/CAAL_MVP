@@ -1,0 +1,13 @@
+@relation activity_recognition_labeled
+
+@attribute "X8" numeric
+@attribute "Z3" numeric
+@attribute "ZAVG" numeric
+@attribute "XPEAK" numeric
+@attribute "ZPEAK" numeric
+@attribute "YSTANDDEV" numeric
+@attribute class{ "Sitting" , "Active" }
+
+@data
+0.13,0.12,1.76,2075,1550,8.17,?
+0,0,8.24,257.35,315,0.03,?
