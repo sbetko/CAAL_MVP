@@ -22,6 +22,7 @@ import java.util.List;
 public class Meta extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // defines intents for making calls to services
         Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
         Intent cleanerIntent = new Intent(this.getApplicationContext(), Cleaner.class);
 
