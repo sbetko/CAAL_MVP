@@ -10,8 +10,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle icicle) {
+        Intent mServiceIntent = new Intent(this.getApplicationContext(), Meta.class); // DELETE
+        startService(mServiceIntent); // DELETE
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
+
 /**
  *
  * Old button code
@@ -27,10 +30,10 @@ public class MainActivity extends AppCompatActivity {
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Intent mServiceIntent = new Intent(buttonView.getContext(), Meta.class);
+                    Intent mServiceIntent = new Intent(buttonView.getContext(), Reader.class);
                     startService(mServiceIntent);
                 } else {
-                    Intent mServiceIntent = new Intent(buttonView.getContext(), Meta.class);
+                    Intent mServiceIntent = new Intent(buttonView.getContext(), Reader.class);
                     stopService(mServiceIntent);
                 }
             }
