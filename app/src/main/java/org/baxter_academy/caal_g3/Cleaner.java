@@ -9,8 +9,69 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
+    public void onCreate() {
+        String arffDataFilename = "processedData";
+        BufferedWriter arffDataWriter = null;
+
+        try {
+            arffDataWriter = new BufferedWriter(
+                    new FileWriter(new File(getFilesDir(), arffDataFilename)
+            ));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        StringBuilder toWrite = new StringBuilder();
+        toWrite.append("@relation activity_recognition_labeled");
+        toWrite.append("'@attribute \"X8\" numeric");
+        toWrite.append("@attribute \"Z3\" numeric");
+        toWrite.append("@attribute \"ZAVG\" numeric");
+        toWrite.append("@attribute \"XPEAK\" numeric");
+        toWrite.append("@attribute \"ZPEAK\" numeric");
+        toWrite.append("@attribute \"YSTANDDEV\" numeric");
+        toWrite.append("@attribute class{ \"Sitting\" , \"Active\" }");
+        toWrite.append("@data");
+        toWrite.append("0.13,0.12,1.76,2075,1550,8.17,?");
+        toWrite.append("0,0,8.24,257.35,315,0.03,?");
+
+/** NEWLINE MAY NOT BE NEEDED WITH STRINGBUILDER.APPEND()
+        toWrite.append("@relation activity_recognition_labeled" + System.getProperty("line.separator"));
+        toWrite.append("'@attribute \"X8\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"Z3\" numeric"  + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"ZAVG\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"XPEAK\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"ZPEAK\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"YSTANDDEV\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute class{ \"Sitting\" , \"Active\" }" + System.getProperty("line.separator"));
+        toWrite.append("@data");
+        toWrite.append("0.13,0.12,1.76,2075,1550,8.17,?" + System.getProperty("line.separator"));
+        toWrite.append("0,0,8.24,257.35,315,0.03,?" + System.getProperty("line.separator"));
+**/
+        String finalString = toWrite.toString();
+
+        try {
+            System.out.println(finalString); // debug
+            if (arffDataWriter != null) {
+                arffDataWriter.write(finalString);
+                arffDataWriter.newLine();
+                arffDataWriter.flush();
+                arffDataWriter.close();
+                System.out.println("file reference is not null");
+            } else {
+                System.out.println("file reference is null");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     @Nullable
     @Override
