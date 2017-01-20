@@ -18,6 +18,11 @@ import java.io.IOException;
 
 
 public class Reader extends Service implements SensorEventListener {
+    // constants for sensor management
+    public int maxDataPoints = 25;
+    public int curDataPoints = 0;
+    public int sensorRate = 50;
+
     // stuff for sensor calls
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -53,9 +58,6 @@ public class Reader extends Service implements SensorEventListener {
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             long curTime = SystemClock.elapsedRealtime();
-            int maxDataPoints = 250;
-            int curDataPoints = 0;
-            int sensorRate = 50;
 
             // if its time for gathering the next data point
             if ((curTime - lastUpdate) > sensorRate) {
@@ -67,42 +69,43 @@ public class Reader extends Service implements SensorEventListener {
                 System.out.println(x);
                 System.out.println(y);
                 System.out.println(z);
+                System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
                 String toWrite = x + "," + y + "," + z + "," + curTime + ";" + System.getProperty("line.separator");
 
-                    // if its time to stop reading sensor data
-                    if (curDataPoints >= maxDataPoints) {
-                        /** DOES ALL FILE WORK (NO PRIOR SETUP) **/
-                        // sets up file object for storing accelerometer data
-                        String FILENAME = "classification";
-                        BufferedWriter writer = null;
+                // if its time to stop reading sensor data
+                if (curDataPoints >= maxDataPoints) {
+                    /** DOES ALL FILE WORK (NO PRIOR SETUP) **/
+                    // sets up file object for storing accelerometer data
+                    String FILENAME = "classification";
+                    BufferedWriter writer = null;
 
-                        // opens file for writing
-                        try {
-                            writer = new BufferedWriter(
-                                    new FileWriter(new File(getFilesDir(), FILENAME)
-                                    ));
+                    // opens file for writing
+                    try {
+                        writer = new BufferedWriter(
+                                new FileWriter(new File(getFilesDir(), FILENAME)
+                                ));
 
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    // writes to file
+                    try {
+                        if (writer != null) {
+                            writer.write(toWrite);
+                            writer.newLine();
+                            writer.flush();
+                            writer.close();
+                            System.out.println("file reference is not null");
+                        } else {
+                            System.out.println("file reference is null");
                         }
-
-                        // writes to file
-                        try {
-                            if (writer != null) {
-                                writer.write(toWrite);
-                                writer.newLine();
-                                writer.flush();
-                                writer.close();
-                                System.out.println("file reference is not null");
-                            } else {
-                                System.out.println("file reference is null");
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        stopSelf();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    stopSelf();
                     }
             }
         }
@@ -120,7 +123,7 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(this, "Stopped Reader", Toast.LENGTH_SHORT).show(); // Pops up message
         System.out.println("Stopped Reader");
         sensorManager.unregisterListener(this); // stops sensorManager
-        Intent cleanerIntent = new Intent(this.getApplicationContext(), Cleaner.class);
+        Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class);
         startService(cleanerIntent);
         super.onDestroy();
     }

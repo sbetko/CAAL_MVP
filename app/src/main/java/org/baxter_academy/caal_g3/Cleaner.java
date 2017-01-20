@@ -18,7 +18,8 @@ import java.io.IOException;
 /** Cleaner pre-processes data before it is classified **/
 public class Cleaner extends Service {
     public void onCreate() {
-        String arffDataFilename = "processedData";
+        System.out.println("Started Reader");
+        String arffDataFilename = "unlabeledData";
         BufferedWriter arffDataWriter = null;
 
         try {
@@ -69,7 +70,7 @@ public class Cleaner extends Service {
     }
 
     public void onDestroy() {
-        Intent wekaClassifierIntent = new Intent(this.getApplicationContext(), WekaClassifier.class);
+        Intent wekaClassifierIntent = new Intent(this.getBaseContext(), WekaClassifier.class);
         startService(wekaClassifierIntent);
 
     }

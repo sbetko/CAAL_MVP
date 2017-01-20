@@ -24,11 +24,12 @@ public class WekaClassifier extends Service {
 
     @Override
     public void onCreate() {
+        System.out.println("Started WekaCleaner");
         super.onCreate();
 
         /** ASSIGN / LOAD RESOURCES **/
         // assigns classifier
-        InputStream classifier = getResources().openRawResource(R.raw.randomforestbinarycfscsc20);
+        InputStream classifier = getResources().openRawResource(R.raw.randomforestbinarycfscsc20); //TODO
 
         Classifier cls = null; // TODO study SerializationHelper
         try {
@@ -49,7 +50,7 @@ public class WekaClassifier extends Service {
                 getResources().openRawResource(R.raw.testunlabeledbinarycfs)
         );
 
-        // load unlabeled data
+        // load unlabeled data in Instance object
         Instances unlabeled = null;
         try {
             unlabeled = new Instances(
@@ -59,10 +60,10 @@ public class WekaClassifier extends Service {
         }
 
         /** PREPARE OPERATIONS **/
-        // set class attribute
+        // set class attributes
         unlabeled.setClassIndex(unlabeled.numAttributes() - 1);
 
-        // create copy
+        // create copy of UNLABELED instance to be LABELED
         Instances labeled = new Instances(unlabeled);
 
         /** PERFORM CLASSIFICATION **/
@@ -79,7 +80,6 @@ public class WekaClassifier extends Service {
 
         /** SAVE LABELED INSTANCE **/
         String FILENAME = "classification";
-        File file = new File(FILENAME);
         BufferedWriter writer = null;
 
 
@@ -137,7 +137,8 @@ public class WekaClassifier extends Service {
      */
 
     public void onDestroy() {
-        Intent schedulerIntent = new Intent(this.getApplicationContext(), Scheduler.class);
+        System.out.println("Stopped WekeClassifier");
+        Intent schedulerIntent = new Intent(this.getBaseContext(), Scheduler.class);
         startService(schedulerIntent);
     }
 
