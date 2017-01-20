@@ -18,6 +18,11 @@ import java.io.IOException;
 
 
 public class Reader extends Service implements SensorEventListener {
+    // constants for sensor stuff
+    public int maxDataPoints = 50; //250;
+    public int curDataPoints = 0;
+    public int sensorRate = 50;
+
     // stuff for sensor calls
     private SensorManager sensorManager;
     private Sensor accelerometer;
@@ -53,9 +58,7 @@ public class Reader extends Service implements SensorEventListener {
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             long curTime = SystemClock.elapsedRealtime();
-            int maxDataPoints = 250;
-            int curDataPoints = 0;
-            int sensorRate = 50;
+
 
             // if its time for gathering the next data point
             if ((curTime - lastUpdate) > sensorRate) {
@@ -120,7 +123,7 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(this, "Stopped Reader", Toast.LENGTH_SHORT).show(); // Pops up message
         System.out.println("Stopped Reader");
         sensorManager.unregisterListener(this); // stops sensorManager
-        Intent cleanerIntent = new Intent(this.getApplicationContext(), Cleaner.class);
+        Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class); //getBaseContext vs getApplicationContext while in service?
         startService(cleanerIntent);
         super.onDestroy();
     }
