@@ -17,7 +17,7 @@ import java.io.IOException;
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
     public void onCreate() {
-        System.out.println("Started Reader");
+        System.out.println("Started Cleaner");
         String arffDataFilename = "unlabeledData";
         BufferedWriter arffDataWriter = null;
 
@@ -48,7 +48,7 @@ public class Cleaner extends Service {
 
 
         toWrite.append("@relation activity_recognition_labeled" + System.getProperty("line.separator"));
-        toWrite.append("'@attribute \"X8\" numeric" + System.getProperty("line.separator"));
+        toWrite.append("@attribute \"X8\" numeric" + System.getProperty("line.separator"));
         toWrite.append("@attribute \"Z3\" numeric"  + System.getProperty("line.separator"));
         toWrite.append("@attribute \"ZAVG\" numeric" + System.getProperty("line.separator"));
         toWrite.append("@attribute \"XPEAK\" numeric" + System.getProperty("line.separator"));

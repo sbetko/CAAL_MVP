@@ -66,10 +66,10 @@ public class Reader extends Service implements SensorEventListener {
                 lastUpdate = curTime;
                 curDataPoints = curDataPoints + 1;
                 //prints to debug
-                System.out.println("Test");
                 System.out.println(x);
                 System.out.println(y);
                 System.out.println(z);
+                System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
                 String toWrite = x + "," + y + "," + z + "," + curTime + ";" + System.getProperty("line.separator");

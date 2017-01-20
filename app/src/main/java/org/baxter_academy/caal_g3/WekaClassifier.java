@@ -40,23 +40,32 @@ public class WekaClassifier extends Service {
             e.printStackTrace();
         }
 
-        /** Does not work
-         // assign and load labeled data
-         InputStreamReader labeledData = new InputStreamReader(
-         getResources().openRawResource(R.raw.testlabeledbinarycfs)
+
+        // OLD ASSIGN/LOAD FUNCTION
+         Reader reader = new InputStreamReader(
+         getResources().openRawResource(R.raw.testunlabeledbinarycfs)
          );
-         BufferedReader labeledDataReader = new BufferedReader(labeledData);
-         **/
+         // load unlabeled data
+         Instances unlabeled = null;
+         try {
+         unlabeled = new Instances(
+         new BufferedReader(reader));
+         } catch (IOException e) {
+         e.printStackTrace();
+         }
+
+
+/**
         // assign unlabeled data
         File path = getBaseContext().getFilesDir();
-        File file = new File(path, "unlabeledData");
-        int length = (int) file.length();
+        File unlabeledDataFile = new File(path, "unlabeledData");
+        int length = (int) unlabeledDataFile.length();
 
         byte[] bytes = new byte[length];
 
         FileInputStream in = null;
         try {
-            in = new FileInputStream(file);
+            in = new FileInputStream(unlabeledDataFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -74,28 +83,14 @@ public class WekaClassifier extends Service {
 
         String contents = new String(bytes);
 
-        /*** OLD LOAD FUNCTION
-         Reader reader = new InputStreamReader(
-         getResources().openRawResource(R.raw.testunlabeledbinarycfs)
-         );
         // load unlabeled data
         Instances unlabeled = null;
         try {
-            unlabeled = new Instances(
-                    new BufferedReader(reader));
+            unlabeled = new Instances(new InputStreamReader(new FileInputStream(unlabeledDataFile)));
         } catch (IOException e) {
             e.printStackTrace();
         }
-         **/
-
-        // load unlabeled data
-        Instances unlabeled = null;
-        try {
-            unlabeled = new Instances(new InputStreamReader(new FileInputStream(file)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+**/
         /** PREPARE OPERATIONS **/
         // set class attribute
         unlabeled.setClassIndex(unlabeled.numAttributes() - 1); //fixme returns null pointer exception (verify unlabeledData?)
@@ -172,6 +167,7 @@ public class WekaClassifier extends Service {
      */
 
     public void onDestroy() {
+        System.out.println("Stopped WekaClassifier");
         Intent schedulerIntent = new Intent(this.getBaseContext(), Scheduler.class);
         startService(schedulerIntent);
     }

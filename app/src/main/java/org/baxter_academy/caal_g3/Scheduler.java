@@ -32,7 +32,7 @@ public class Scheduler extends Service {
      * service.
      */
 
-    public void onStart() {
+    public void onCreate() {
         System.out.println("Started Scheduler");
         // load logs from WekaClassifer (csv format)
         // check if its time to remind the user
