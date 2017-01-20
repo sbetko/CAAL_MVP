@@ -21,7 +21,19 @@
         <service
             android:name=".Reader"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
+        <service
+            android:name=".Cleaner"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".WekaClassifier"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".Scheduler"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>
