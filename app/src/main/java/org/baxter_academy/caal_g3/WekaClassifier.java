@@ -11,6 +11,8 @@ import org.baxter_academy.caal_g3.R;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +26,9 @@ public class WekaClassifier extends Service {
 
     @Override
     public void onCreate() {
-        System.out.println("Started WekaCleaner");
+
+        System.out.println("Started WekaClassifier");
+
         super.onCreate();
 
         /** ASSIGN / LOAD RESOURCES **/
@@ -38,30 +42,61 @@ public class WekaClassifier extends Service {
             e.printStackTrace();
         }
 
-        /** Does not work
-         // assign and load labeled data
-         InputStreamReader labeledData = new InputStreamReader(
-         getResources().openRawResource(R.raw.testlabeledbinarycfs)
+
+        // OLD ASSIGN/LOAD FUNCTION
+         Reader reader = new InputStreamReader(
+         getResources().openRawResource(R.raw.testunlabeledbinarycfs)
          );
-         BufferedReader labeledDataReader = new BufferedReader(labeledData);
-         **/
+         // load unlabeled data
+         Instances unlabeled = null;
+         try {
+         unlabeled = new Instances(
+         new BufferedReader(reader));
+         } catch (IOException e) {
+         e.printStackTrace();
+         }
+
+
+/**
         // assign unlabeled data
-        Reader reader = new InputStreamReader(
-                getResources().openRawResource(R.raw.testunlabeledbinarycfs)
-        );
+        File path = getBaseContext().getFilesDir();
+        File unlabeledDataFile = new File(path, "unlabeledData");
+        int length = (int) unlabeledDataFile.length();
+
+        byte[] bytes = new byte[length];
+
+        FileInputStream in = null;
+        try {
+            in = new FileInputStream(unlabeledDataFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            in.read(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String contents = new String(bytes);
 
         // load unlabeled data in Instance object
         Instances unlabeled = null;
         try {
-            unlabeled = new Instances(
-                    new BufferedReader(reader));
+            unlabeled = new Instances(new InputStreamReader(new FileInputStream(unlabeledDataFile)));
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+**/
         /** PREPARE OPERATIONS **/
-        // set class attributes
-        unlabeled.setClassIndex(unlabeled.numAttributes() - 1);
+
+        // set class attribute
+        unlabeled.setClassIndex(unlabeled.numAttributes() - 1); //fixme returns null pointer exception (verify unlabeledData?)
 
         // create copy of UNLABELED instance to be LABELED
         Instances labeled = new Instances(unlabeled);
@@ -81,7 +116,6 @@ public class WekaClassifier extends Service {
         /** SAVE LABELED INSTANCE **/
         String FILENAME = "classification";
         BufferedWriter writer = null;
-
 
         // opens file for writing
         try {
@@ -112,7 +146,6 @@ public class WekaClassifier extends Service {
 
         /** FINISH **/
         stopSelf();
-
     }
 
     /**
@@ -128,7 +161,7 @@ public class WekaClassifier extends Service {
      * <a href="{@docRoot}guide/topics/fundamentals/processes-and-threads.html">Processes and
      * Threads</a>.</p>
      *
-     * @param intent The Intent that was used to bind to this service,
+   //  * @param intent The Intent that was used to bind to this service,
      *               as given to {@link Context#bindService
      *               Context.bindService}.  Note that any extras that were included with
      *               the Intent at that point will <em>not</em> be seen here.
@@ -137,7 +170,8 @@ public class WekaClassifier extends Service {
      */
 
     public void onDestroy() {
-        System.out.println("Stopped WekeClassifier");
+        System.out.println("Stopped WekaClassifier");
+
         Intent schedulerIntent = new Intent(this.getBaseContext(), Scheduler.class);
         startService(schedulerIntent);
     }

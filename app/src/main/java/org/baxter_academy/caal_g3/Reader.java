@@ -20,6 +20,7 @@ import java.io.IOException;
 public class Reader extends Service implements SensorEventListener {
     // constants for sensor management
     public int maxDataPoints = 25;
+
     public int curDataPoints = 0;
     public int sensorRate = 50;
 
@@ -65,7 +66,6 @@ public class Reader extends Service implements SensorEventListener {
                 lastUpdate = curTime;
                 curDataPoints = curDataPoints + 1;
                 //prints to debug
-                System.out.println("Test");
                 System.out.println(x);
                 System.out.println(y);
                 System.out.println(z);
@@ -123,25 +123,10 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(this, "Stopped Reader", Toast.LENGTH_SHORT).show(); // Pops up message
         System.out.println("Stopped Reader");
         sensorManager.unregisterListener(this); // stops sensorManager
-        Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class);
+
+        Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class); //getBaseContext vs getApplicationContext while in service?
+
         startService(cleanerIntent);
         super.onDestroy();
     }
-
-/**
-  * experimental method
-    private void getAccelerometer(SensorEvent event) {
-        float[] values = event.values;
-        // Movement
-        float x = values[0];
-        float y = values[1];
-        float z = values[2];
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(z);
-
-        long actualTime = System.currentTimeMillis();
-
-    }
- **/
 }
