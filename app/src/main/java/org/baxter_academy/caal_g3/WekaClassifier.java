@@ -26,12 +26,14 @@ public class WekaClassifier extends Service {
 
     @Override
     public void onCreate() {
+
         System.out.println("Started WekaClassifier");
+
         super.onCreate();
 
         /** ASSIGN / LOAD RESOURCES **/
         // assigns classifier
-        InputStream classifier = getResources().openRawResource(R.raw.randomforestbinarycfscsc20);
+        InputStream classifier = getResources().openRawResource(R.raw.randomforestbinarycfscsc20); //TODO
 
         Classifier cls = null; // TODO study SerializationHelper
         try {
@@ -83,7 +85,7 @@ public class WekaClassifier extends Service {
 
         String contents = new String(bytes);
 
-        // load unlabeled data
+        // load unlabeled data in Instance object
         Instances unlabeled = null;
         try {
             unlabeled = new Instances(new InputStreamReader(new FileInputStream(unlabeledDataFile)));
@@ -92,10 +94,11 @@ public class WekaClassifier extends Service {
         }
 **/
         /** PREPARE OPERATIONS **/
+
         // set class attribute
         unlabeled.setClassIndex(unlabeled.numAttributes() - 1); //fixme returns null pointer exception (verify unlabeledData?)
 
-        // create copy
+        // create copy of UNLABELED instance to be LABELED
         Instances labeled = new Instances(unlabeled);
 
         /** PERFORM CLASSIFICATION **/
@@ -168,6 +171,7 @@ public class WekaClassifier extends Service {
 
     public void onDestroy() {
         System.out.println("Stopped WekaClassifier");
+
         Intent schedulerIntent = new Intent(this.getBaseContext(), Scheduler.class);
         startService(schedulerIntent);
     }

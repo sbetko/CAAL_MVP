@@ -31,7 +31,7 @@ public class Scheduler extends Service {
      * @return Return an IBinder through which clients can call on to the
      * service.
      */
-
+  
     public void onCreate() {
         System.out.println("Started Scheduler");
         // load logs from WekaClassifer (csv format)
