@@ -6,13 +6,9 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import org.baxter_academy.caal_g3.R;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -168,7 +164,7 @@ public class WekaClassifier extends Service {
 
     public void onDestroy() {
         System.out.println("Stopped WekaClassifier");
-        Intent schedulerIntent = new Intent(this.getBaseContext(), Scheduler.class);
+        Intent schedulerIntent = new Intent(this.getBaseContext(), PresentInterrupt.class);
         startService(schedulerIntent);
     }
 

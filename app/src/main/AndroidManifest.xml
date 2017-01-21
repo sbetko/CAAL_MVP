@@ -31,7 +31,7 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".Scheduler"
+            android:name=".PresentInterrupt"
             android:enabled="true"
             android:exported="false" />
     </application>

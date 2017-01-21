@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.os.SystemClock;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -36,7 +37,7 @@ public class Reader extends Service implements SensorEventListener {
     // variables for sensor data
     private long lastUpdate = 0;
     // sets up file object for storing accelerometer data
-    public String FILENAME = "classification";
+    public String FILENAME = "rawData";
     public BufferedWriter writer = null;
 
     @Override
@@ -72,7 +73,7 @@ public class Reader extends Service implements SensorEventListener {
     // called by system every time a sensor event gets triggered
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
-        float x = sensorEvent.values[0];
+        float x = sensorEvent.values[0]; //TODO move below
         float y = sensorEvent.values[1];
         float z = sensorEvent.values[2];
 
@@ -155,8 +156,15 @@ public class Reader extends Service implements SensorEventListener {
     public void onDestroy() {
         System.out.println("Stopped Reader");
         sensorManager.unregisterListener(this); // stops sensorManager
-        Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class);
-        startService(cleanerIntent);
+
+        // Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class);
+        // startService(cleanerIntent);
+
+        Log.d("sender", "Broadcasting message");
+        Intent intent = new Intent("Reader Finished");
+        // You can also include some extra data.
+        intent.putExtra("message", "collected " + maxDataPoints + " data points");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
 /**
