@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,6 +20,7 @@ import java.io.Reader;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
+//TODO add broadcast for finishing of work
 public class WekaClassifier extends Service {
 
     @Override
@@ -164,8 +167,13 @@ public class WekaClassifier extends Service {
 
     public void onDestroy() {
         System.out.println("Stopped WekaClassifier");
-        Intent schedulerIntent = new Intent(this.getBaseContext(), PresentInterrupt.class);
-        startService(schedulerIntent);
+        Log.d("sender", "Broadcasting message");
+        Intent intent = new Intent("FinishedWork");
+        // You can also include some extra data.
+        intent.putExtra("status", "WekaClassifier finished");
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        //Intent schedulerIntent = new Intent(this.getBaseContext(), PresentInterrupt.class);
+        //startService(schedulerIntent);
     }
 
     @Nullable

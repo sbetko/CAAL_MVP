@@ -26,9 +26,9 @@ import java.io.InputStreamReader;
 
 public class Reader extends Service implements SensorEventListener {
     // constants for sensor stuff
-    public int maxDataPoints = 50; //250;
+    public int maxDataPoints = 20;
     public int curDataPoints = 0;
-    public int sensorRate = 50;
+    public int sensorRate = 1;
 
     // stuff for sensor calls
     private SensorManager sensorManager;
@@ -51,7 +51,6 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_SHORT).show();
         super.onCreate();
 
-
         // opens file for writing
         try {
             writer = new BufferedWriter(
@@ -73,11 +72,11 @@ public class Reader extends Service implements SensorEventListener {
     // called by system every time a sensor event gets triggered
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
-        float x = sensorEvent.values[0]; //TODO move below
-        float y = sensorEvent.values[1];
-        float z = sensorEvent.values[2];
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = sensorEvent.values[0];
+            float y = sensorEvent.values[1];
+            float z = sensorEvent.values[2];
 
             // gets uptime of system
             long curTime = SystemClock.elapsedRealtime();
@@ -94,7 +93,7 @@ public class Reader extends Service implements SensorEventListener {
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = x + "," + y + "," + z + "," + curTime + ";"; // + System.getProperty("line.separator"); //write.flush may be sufficient
+                String toWrite = x + "," + y + "," + z + "," + curTime + ";"; // + System.getProperty("line.separator"); //write.newLine may be sufficient
 
                 // writes string to file
                 try {
@@ -111,36 +110,36 @@ public class Reader extends Service implements SensorEventListener {
                     e.printStackTrace();
                 }
 
-                    // if its time to stop reading sensor data
-                    if (curDataPoints >= maxDataPoints) {
-                        // attempts to read back file for debug
-                        try {
-                            InputStream inputStream = getBaseContext().openFileInput(FILENAME);
+                // if its time to stop reading sensor data
+                if (curDataPoints >= maxDataPoints) {
+                    // attempts to read back file for debug
+                    try {
+                        InputStream inputStream = getBaseContext().openFileInput(FILENAME);
 
-                            if ( inputStream != null ) {
-                                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                                String receiveString = "";
-                                StringBuilder stringBuilder = new StringBuilder();
+                        if ( inputStream != null ) {
+                            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                            String receiveString = "";
+                            StringBuilder stringBuilder = new StringBuilder();
 
-                                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                                    stringBuilder.append(receiveString);
-                                }
-
-                                inputStream.close();
-                                String ret;
-                                ret = stringBuilder.toString();
-                                System.out.print(ret);
+                            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                                stringBuilder.append(receiveString);
                             }
-                        }
-                        catch (FileNotFoundException e) {
-                            Log.e("login activity", "File not found: " + e.toString());
-                        } catch (IOException e) {
-                            Log.e("login activity", "Can not read file: " + e.toString());
-                        }
 
-                        /** FINISH **/
-                        stopSelf();
+                            inputStream.close();
+                            String ret;
+                            ret = stringBuilder.toString();
+                            System.out.print(ret);
+                        }
+                    }
+                    catch (FileNotFoundException e) {
+                        Log.e("login activity", "File not found: " + e.toString());
+                    } catch (IOException e) {
+                        Log.e("login activity", "Can not read file: " + e.toString());
+                    }
+
+                    /** FINISH **/
+                    stopSelf();
                     }
             }
         }
@@ -161,9 +160,10 @@ public class Reader extends Service implements SensorEventListener {
         // startService(cleanerIntent);
 
         Log.d("sender", "Broadcasting message");
-        Intent intent = new Intent("Reader Finished");
+        Intent intent = new Intent("FinishedWork");
         // You can also include some extra data.
         intent.putExtra("message", "collected " + maxDataPoints + " data points");
+        intent.putExtra("status", "Reader finished");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
