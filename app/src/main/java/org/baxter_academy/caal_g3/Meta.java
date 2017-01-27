@@ -49,7 +49,6 @@ public class Meta extends Service {
             } else if (status == "PresentInterrupt finished") {
                 setAlarm();
             }
-
         }
     };
 
@@ -70,21 +69,11 @@ public class Meta extends Service {
         System.out.println("Stopped Meta");
 
         // stops reader in case it is running
+        //TODO does Reader need to scrub the rawData file?
         Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
         stopService(readerIntent);
 
         // unregisters local broadcast receiver
         LocalBroadcastManager.getInstance(this).unregisterReceiver(coreServiceChain);
-
-        /**
-        // I want to restart this service again in 1 minute
-        AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
-        alarm.set(
-                alarm.RTC_WAKEUP,
-                System.currentTimeMillis() + (1000 * 60 * 1),
-                PendingIntent.getService(this, 0, new Intent(this, Meta.class), 0)
-
-        );
-         **/
     }
 }

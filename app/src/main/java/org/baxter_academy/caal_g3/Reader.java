@@ -65,8 +65,6 @@ public class Reader extends Service implements SensorEventListener {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-
-
     }
 
     // called by system every time a sensor event gets triggered
@@ -93,7 +91,7 @@ public class Reader extends Service implements SensorEventListener {
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = x + "," + y + "," + z + "," + curTime + ";"; // + System.getProperty("line.separator"); //write.newLine may be sufficient
+                String toWrite = x + "," + y + "," + z + "," + curTime + ";";
 
                 // writes string to file
                 try {
@@ -101,8 +99,7 @@ public class Reader extends Service implements SensorEventListener {
                         writer.write(toWrite);
                         writer.newLine();
                         writer.flush();
-                        //writer.close();
-                        //System.out.println("file reference is not null");
+
                     } else {
                         System.out.println("file reference is null");
                     }
@@ -112,6 +109,12 @@ public class Reader extends Service implements SensorEventListener {
 
                 // if its time to stop reading sensor data
                 if (curDataPoints >= maxDataPoints) {
+
+                    try {
+                        writer.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                     // attempts to read back file for debug
                     try {
                         InputStream inputStream = getBaseContext().openFileInput(FILENAME);

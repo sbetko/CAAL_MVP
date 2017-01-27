@@ -17,7 +17,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 //TODO write pre-processing / ARFF formatting functions
-//TODO add broadcast for finishing of work
 public class Cleaner extends Service {
     public void onCreate() {
         System.out.println("Started Cleaner");
@@ -81,10 +80,6 @@ public class Cleaner extends Service {
         // You can also include some extra data.
         intent.putExtra("status", "Cleaner finished");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
-
-        /** direct service - service or model - model interaction not used **/
-        //Intent wekaClassifierIntent = new Intent(this.getApplicationContext(), WekaClassifier.class);
-        //startService(wekaClassifierIntent);
 
     }
 }

@@ -34,16 +34,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-/*        final Button button = (Button) findViewById(R.id.startbutton);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                System.out.println("Clicked");
-                Intent mServiceIntent = new Intent(v.getContext(), Meta.class);
-                startService(mServiceIntent);
-            }
-        });*/
-
-
     }
 }

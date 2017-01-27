@@ -16,7 +16,7 @@ public class PresentInterrupt extends Service {
 
     public void onCreate() {
         System.out.println("Started PresentInterrupt");
-        // load logs from WekaClassifer (csv format)
+        //TODO load logs from WekaClassifer (csv format)
         // check if its time to remind the user
         stopSelf();
     }
