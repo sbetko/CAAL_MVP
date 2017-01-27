@@ -3,44 +3,35 @@ package org.baxter_academy.caal_g3;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.job.JobInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.Timer;
 
 /**
  * Created by Baxter on 1/13/2017.
  */
 
 public class Meta extends Service {
+
     @Override
-    //public int onStartCommand(Intent intent, int flags, int startId) {
     public void onCreate() {
         super.onCreate();
-        System.out.println("started meta");
-        // defines intents for making calls to services
-        //stopService(readerIntent); //TODO somehow understand when Reader is finished (broadcast? binding?)
+
+        //for coreServiceChain
         Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
         startService(readerIntent);
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+        LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
-        // I don't want this service to stay in memory, so I stop it
-        // immediately after doing what I wanted it to do.
-        //stopSelf();
-        //return START_STICKY;
     }
 
-    public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
+    public BroadcastReceiver coreServiceChain = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
@@ -56,19 +47,18 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                try {
-                    Thread.sleep(1000*10); //waits 10 seconds but locks UI thread?
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    Intent readerIntent = new Intent(context, Reader.class);
-                    startService(readerIntent);
-                }
-                Intent readerIntent = new Intent(context, Reader.class);
-                startService(readerIntent);
+                setAlarm();
             }
 
         }
     };
+
+    public void setAlarm() {
+        Intent readerIntent = new Intent(Meta.this, Reader.class);
+        PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 ); //calling this.getApplicationContext = nullpointer
+        AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
+        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000 * 10, pintent);
+    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -84,7 +74,8 @@ public class Meta extends Service {
         stopService(readerIntent);
 
         // unregisters local broadcast receiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mMessageReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(coreServiceChain);
+
         /**
         // I want to restart this service again in 1 minute
         AlarmManager alarm = (AlarmManager)getSystemService(ALARM_SERVICE);
