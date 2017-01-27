@@ -17,7 +17,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <!--TODO: try com.example.service format-->
         <service
             android:name=".Reader"
             android:enabled="true"
@@ -31,7 +31,11 @@
             android:enabled="true"
             android:exported="false" />
         <service
-            android:name=".Scheduler"
+            android:name=".PresentInterrupt"
+            android:enabled="true"
+            android:exported="false" />
+        <service
+            android:name=".Meta"
             android:enabled="true"
             android:exported="false" />
     </application>
