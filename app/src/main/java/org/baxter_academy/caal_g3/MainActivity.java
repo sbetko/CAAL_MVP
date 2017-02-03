@@ -1,12 +1,8 @@
 package org.baxter_academy.caal_g3;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.content.Intent;
-import android.view.View;
-import android.widget.Button;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;

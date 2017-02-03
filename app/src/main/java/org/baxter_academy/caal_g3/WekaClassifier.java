@@ -1,7 +1,6 @@
 package org.baxter_academy.caal_g3;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -20,7 +19,6 @@ import java.io.Reader;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 
-//TODO add broadcast for finishing of work
 public class WekaClassifier extends Service {
 
     @Override
@@ -32,7 +30,7 @@ public class WekaClassifier extends Service {
         // assigns classifier
         InputStream classifier = getResources().openRawResource(R.raw.randomforestbinarycfscsc20);
 
-        Classifier cls = null; // TODO study SerializationHelper
+        Classifier cls = null;
         try {
             cls = (Classifier) weka.core.SerializationHelper.read(classifier);
         } catch (Exception e) {

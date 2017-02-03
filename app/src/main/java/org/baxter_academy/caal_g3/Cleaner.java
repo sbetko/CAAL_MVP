@@ -16,11 +16,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
+    // defines output file name
+    public String arffDataFilename = "unlabeledData";
+
+    // gets input filename from Reader class
+    Reader reader = new Reader();
+    String rawDataFilename = reader.rawDataFilename;
+
     public void onCreate() {
+        String rawDataFilePath = getApplicationContext().getFilesDir() + "/" + rawDataFilename; //todo declare path in Reader
+        String arffDataFilePath = getApplicationContext().getFilesDir() + "/" + rawDataFilename; //cannot declare in outer scope because of illegal forward reference
         System.out.println("Started Cleaner");
-        String arffDataFilename = "unlabeledData";
+
         BufferedWriter arffDataWriter = null;
 
         try {
@@ -30,8 +40,13 @@ public class Cleaner extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        new File(getFilesDir(), arffDataFilename);
 
-        /** EVERYTHING IN THIS SECTION IS JUST PLACEHOLDER FOR WEKACLASSIFIER CLASS **/
+        // defines arguments for StandAloneFeat (WISDM)
+        String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
+        StandAloneFeat.main(IOString);
+
+        /** EVERYTHING IN THIS SECTION IS JUST PLACEHOLDER FOR SUPPLYING DATA TO WEKACLASSIFIER CLASS (see to-do)
         StringBuilder toWrite = new StringBuilder();
 
         toWrite.append("@relation activity_recognition_labeled" + System.getProperty("line.separator"));
@@ -62,6 +77,7 @@ public class Cleaner extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        **/
 
         /** FINISH **/
         stopSelf();

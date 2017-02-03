@@ -4,10 +4,10 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
-import android.hardware.SensorEventListener;
-import android.os.IBinder;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -16,7 +16,6 @@ import android.widget.Toast;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,7 +36,7 @@ public class Reader extends Service implements SensorEventListener {
     // variables for sensor data
     private long lastUpdate = 0;
     // sets up file object for storing accelerometer data
-    public String FILENAME = "rawData";
+    public String rawDataFilename = "rawData";
     public BufferedWriter writer = null;
 
     @Override
@@ -54,7 +53,7 @@ public class Reader extends Service implements SensorEventListener {
         // opens file for writing
         try {
             writer = new BufferedWriter(
-                    new FileWriter(new File(getFilesDir(), FILENAME)
+                    new FileWriter(new File(getFilesDir(), rawDataFilename)
                     ));
 
         } catch (IOException e) {
@@ -91,7 +90,7 @@ public class Reader extends Service implements SensorEventListener {
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = x + "," + y + "," + z + "," + curTime + ";";
+                String toWrite = 1 + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";";
 
                 // writes string to file
                 try {
@@ -117,7 +116,7 @@ public class Reader extends Service implements SensorEventListener {
                     }
                     // attempts to read back file for debug
                     try {
-                        InputStream inputStream = getBaseContext().openFileInput(FILENAME);
+                        InputStream inputStream = getBaseContext().openFileInput(rawDataFilename);
 
                         if ( inputStream != null ) {
                             InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
