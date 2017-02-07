@@ -20,15 +20,16 @@ import java.io.IOException;
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
     // defines output file name
-    public String arffDataFilename = "unlabeledData";
+    public String arffDataFilename = "arffDataUnlabeled";
 
     // gets input filename from Reader class
     Reader reader = new Reader();
     String rawDataFilename = reader.rawDataFilename;
 
     public void onCreate() {
+        System.out.println("Started Cleaner");
         String rawDataFilePath = getApplicationContext().getFilesDir() + "/" + rawDataFilename; //todo declare path in Reader
-        String arffDataFilePath = getApplicationContext().getFilesDir() + "/" + rawDataFilename; //cannot declare in outer scope because of illegal forward reference
+        String arffDataFilePath = getApplicationContext().getFilesDir() + "/" + arffDataFilename; //cannot declare in outer scope because of illegal forward reference
         System.out.println("Started Cleaner");
 
         BufferedWriter arffDataWriter = null;
