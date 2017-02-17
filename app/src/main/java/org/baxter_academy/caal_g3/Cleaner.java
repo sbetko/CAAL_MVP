@@ -6,15 +6,13 @@ package org.baxter_academy.caal_g3;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 
 
 //TODO write pre-processing / ARFF formatting functions
@@ -27,27 +25,31 @@ public class Cleaner extends Service {
     String rawDataFilename = reader.rawDataFilename;
 
     public void onCreate() {
-        System.out.println("Started Cleaner");
-        String rawDataFilePath = getApplicationContext().getFilesDir() + "/" + rawDataFilename; //todo declare path in Reader
-        String arffDataFilePath = getApplicationContext().getFilesDir() + "/" + arffDataFilename; //cannot declare in outer scope because of illegal forward reference
+        System.out.println("***********************STARTED CLEANER***********************");
+        String rawDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + rawDataFilename; //todo declare path in Reader
+        String arffDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + arffDataFilename; //cannot declare in outer scope because of illegal forward reference
         System.out.println("Started Cleaner");
 
         BufferedWriter arffDataWriter = null;
 
+        /** UNNECCESARY WITH WISDM API
         try {
             arffDataWriter = new BufferedWriter(
-                    new FileWriter(new File(getFilesDir(), arffDataFilename)
+                    new FileWriter(new File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffDataFilename)
             ));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new File(getFilesDir(), arffDataFilename);
+        new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffDataFilename);
+         **/
 
+
+        /************************* FULL CALL TO WISDM DISABLED FOR NOW **/
         // defines arguments for StandAloneFeat (WISDM)
-        String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
-        StandAloneFeat.main(IOString);
+        // String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
+        // StandAloneFeat.main(IOString);
 
-        /** EVERYTHING IN THIS SECTION IS JUST PLACEHOLDER FOR SUPPLYING DATA TO WEKACLASSIFIER CLASS (see to-do)
+        /** PLACEHOLDER FOR SUPPLYING DATA TO WEKACLASSIFIER CLASS
         StringBuilder toWrite = new StringBuilder();
 
         toWrite.append("@relation activity_recognition_labeled" + System.getProperty("line.separator"));
