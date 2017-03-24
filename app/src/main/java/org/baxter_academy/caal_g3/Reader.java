@@ -7,6 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
@@ -25,9 +26,9 @@ import java.io.InputStreamReader;
 
 public class Reader extends Service implements SensorEventListener {
     // constants for sensor stuff
-    public int maxDataPoints = 20;
+    public int maxDataPoints = 50;
     public int curDataPoints = 0;
-    public int sensorRate = 1;
+    public double sensorRate = 0.01;
 
     // stuff for sensor calls
     private SensorManager sensorManager;
@@ -47,13 +48,14 @@ public class Reader extends Service implements SensorEventListener {
     @Override
     public void onCreate() {
         // Puts a message on the screen
+        System.out.println("***********************STARTED READER***********************");
         Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_SHORT).show();
         super.onCreate();
 
         // opens file for writing
         try {
             writer = new BufferedWriter(
-                    new FileWriter(new File(getFilesDir(), rawDataFilename)
+                    new FileWriter(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), rawDataFilename)
                     ));
 
         } catch (IOException e) {
@@ -84,13 +86,13 @@ public class Reader extends Service implements SensorEventListener {
                 lastUpdate = curTime;
                 curDataPoints = curDataPoints + 1;
                 //prints to debug
-                System.out.println(x);
-                System.out.println(y);
-                System.out.println(z);
+                //System.out.println(x);
+                //System.out.println(y);
+                //System.out.println(z);
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = 1 + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";";
+                String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable
 
                 // writes string to file
                 try {
@@ -114,7 +116,7 @@ public class Reader extends Service implements SensorEventListener {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    // attempts to read back file for debug
+                    /** READS BACK FILE TO SYSTEM.OUT FOR DEBUG **/
                     try {
                         InputStream inputStream = getBaseContext().openFileInput(rawDataFilename);
 
