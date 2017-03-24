@@ -18,7 +18,7 @@ import java.io.BufferedWriter;
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
     // defines output file name
-    public String arffDataFilename = "arffDataUnlabeled";
+    public String arffUnlabeledFilename = "arffDataUnlabeled";
 
     // gets input filename from Reader class
     Reader reader = new Reader();
@@ -27,7 +27,7 @@ public class Cleaner extends Service {
     public void onCreate() {
         System.out.println("***********************STARTED CLEANER***********************");
         String rawDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + rawDataFilename; //todo declare path in Reader
-        String arffDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + arffDataFilename; //cannot declare in outer scope because of illegal forward reference
+        String arffDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + arffUnlabeledFilename; //cannot declare in outer scope because of illegal forward reference
         System.out.println("Started Cleaner");
 
         BufferedWriter arffDataWriter = null;
@@ -35,19 +35,18 @@ public class Cleaner extends Service {
         /** UNNECCESARY WITH WISDM API
         try {
             arffDataWriter = new BufferedWriter(
-                    new FileWriter(new File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffDataFilename)
+                    new FileWriter(new File(this.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffUnlabeledFilename)
             ));
         } catch (IOException e) {
             e.printStackTrace();
         }
-        new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffDataFilename);
+        new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), arffUnlabeledFilename);
          **/
 
 
-        /************************* FULL CALL TO WISDM DISABLED FOR NOW **/
-        // defines arguments for StandAloneFeat (WISDM)
-        // String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
-        // StandAloneFeat.main(IOString);
+        //defines arguments for StandAloneFeat (WISDM)
+        String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
+        StandAloneFeat.main(IOString);
 
         /** PLACEHOLDER FOR SUPPLYING DATA TO WEKACLASSIFIER CLASS
         StringBuilder toWrite = new StringBuilder();

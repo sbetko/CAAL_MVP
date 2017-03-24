@@ -26,9 +26,9 @@ import java.io.InputStreamReader;
 
 public class Reader extends Service implements SensorEventListener {
     // constants for sensor stuff
-    public int maxDataPoints = 200;
+    public int maxDataPoints = 50;
     public int curDataPoints = 0;
-    public double sensorRate = 0.1;
+    public double sensorRate = 0.01;
 
     // stuff for sensor calls
     private SensorManager sensorManager;
@@ -53,7 +53,6 @@ public class Reader extends Service implements SensorEventListener {
         super.onCreate();
 
         // opens file for writing
-        //TODO initialize ARFF headers
         try {
             writer = new BufferedWriter(
                     new FileWriter(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), rawDataFilename)
@@ -93,7 +92,7 @@ public class Reader extends Service implements SensorEventListener {
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = 1 + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";";
+                String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable
 
                 // writes string to file
                 try {

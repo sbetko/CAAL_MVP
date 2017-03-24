@@ -45,7 +45,7 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                setAlarm();
+                //setAlarm();
             }
         }
     };
