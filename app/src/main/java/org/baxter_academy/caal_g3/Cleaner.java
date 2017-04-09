@@ -15,7 +15,6 @@ import android.util.Log;
 import java.io.BufferedWriter;
 
 
-//TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
     // defines output file name
     public String arffUnlabeledFilename = "arffDataUnlabeled.arff";
