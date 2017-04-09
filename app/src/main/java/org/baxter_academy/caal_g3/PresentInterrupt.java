@@ -1,7 +1,6 @@
 package org.baxter_academy.caal_g3;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;

@@ -7,18 +7,16 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
-
-import java.util.Timer;
 
 /**
  * Created by Baxter on 1/13/2017.
  */
 
 public class Meta extends Service {
+    public int collectionInterval = 1000*2; //1000ms * 10 = 10 seconds
 
     @Override
     public void onCreate() {
@@ -47,7 +45,7 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                setAlarm();
+                //setAlarm();
             }
         }
     };
@@ -56,7 +54,7 @@ public class Meta extends Service {
         Intent readerIntent = new Intent(Meta.this, Reader.class);
         PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 ); //calling this.getApplicationContext = nullpointer
         AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000 * 10, pintent);
+        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
     }
 
     @Override
