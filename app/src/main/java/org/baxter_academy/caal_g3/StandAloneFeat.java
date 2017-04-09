@@ -161,6 +161,7 @@ public class StandAloneFeat {
 
 			while (!que.isEmpty())
 			{
+				/** old function
 				tup = que.pop();
 				f = tup.getFeat();
 				tuple = "";
@@ -170,11 +171,28 @@ public class StandAloneFeat {
 
 				tuple += tmp;
 				tuple += ",";
-				for (int i = 0; i < 43; i++){ // the data itself
+				for (int i = 0; i < 43; i++){ // the data itself //fixme 43 is hardcoded feature count
 					tuple += f[i];
 					tuple += ",";
 				}
 				tuple += tup.getUsr(); // column 2 is userid
+
+				outp.write(tuple + "\n");
+				tuple = null;
+				**/
+
+			//new function
+				tup = que.pop();
+				f = tup.getFeat();
+				tuple = "";
+                tuple += "1,1,";
+
+				for (int i = 0; i < 43; i++){ // the data itself //fixme 43 is hardcoded feature count
+					tuple += f[i];
+					tuple += ",";
+				}
+
+				tuple += "?"; // column 2 is userid
 
 				outp.write(tuple + "\n");
 				tuple = null;
@@ -199,13 +217,13 @@ public class StandAloneFeat {
 
 			System.out.println("write arff header try block entered ");
 
-			outp.write("@relation person_activities_labeled \n\n" +
+			outp.write("@relation activity_recognition_unlabeled \n\n" +
 					"@attribute \"UNIQUE_ID\" numeric \n" +
-					"@attribute \"ACTIVITY\" { \"");
+					"@attribute \"user\" {\"33\" , \"17\", \"29\", \"13\" , \"20\" , \"27\" , \"6\" , \"15\" , \"32\" , \"36\" , \"18\" , \"35\" , \"11\" , \"16\" , \"5\", \"10\" , \"28\" , \"26\" , \"14\" , \"24\" , \"12\" , \"23\" , \"4\" , \"30\" , \"34\" , \"8\" , \"31\" , \"21\" , \"3\" , \"22\" , \"1\" , \"25\" , \"9\" , \"2\" , \"7\" , \"19\"}");
 
-			outp.write("\"Sitting\", \"Active\"");
+			//outp.write("Sitting\", \"Active\"");
 
-			outp.write( "}\n" +
+			outp.write( "\n" +
 					"@attribute \"X0\" numeric \n"+
 					"@attribute \"X1\" numeric \n"+
 					"@attribute \"X2\" numeric \n"+
@@ -249,15 +267,15 @@ public class StandAloneFeat {
 					"@attribute \"YSTANDDEV\" numeric \n"+
 					"@attribute \"ZSTANDDEV\" numeric \n"+
 					"@attribute \"RESULTANT\" numeric \n"+
-					"@attribute class {");
-			outp.write("\"" + usrList[0] + "\" "); //prints first user, not preceded by comma
-			if (usrCount > 1){ //prints second, third, etc. users with commas first
-				for (int j = 1; j < usrCount; j++){
-					outp.write(", \"" + usrList[j] + "\"");
-				}
-			}
+					"@attribute class { \"Walking\" , \"Jogging\" , \"Upstairs\" , \"Downstairs\" , \"Sitting\" , \"Standing\" }");
+			//outp.write("\"" + usrList[0] + "\" "); //prints first user, not preceded by comma
+			//if (usrCount > 1){ //prints second, third, etc. users with commas first
+			//	for (int j = 1; j < usrCount; j++){
+			//		outp.write(", \"" + usrList[j] + "\"");
+			//	}
+			//}
 
-			outp.write("}\n\n@data\n");
+			outp.write("\n\n@data\n");
 
 			outp.flush();
 		} catch (IOException e) {
@@ -364,7 +382,7 @@ public class StandAloneFeat {
 						if(i == (windowSize*samplingRate)){ // if we reach (windowSize*samplingRate) samples, then the windowSize tuple is done and should be saved
 							savTCount++;
 
-							TupFeat ttup = new TupFeat(1, '\u003F', cTime); //fixme replaced cusr w/ 1 (for long requirement)
+							TupFeat ttup = new TupFeat(1, '\u0031', cTime); //fixme replaced cusr w/ 1 (for long requirement)
 							ttup.setCount(i);
 
 							// all arrays must be copied into new ones because java is pass by reference always

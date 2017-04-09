@@ -87,7 +87,7 @@ public class TupFeat {
 	 * @param timestamp
 	 */
 	public TupFeat(char cact, long timestamp){
-		usr = 0; // indicates that there's no userID assigned
+		usr = 1; // indicates that there's no userID assigned
 		act = cact;
 		time = timestamp;
 	}
@@ -147,7 +147,7 @@ public class TupFeat {
 	}
 
 	/**
-	 * returns the floating point features
+	 * retrns the floating point features
 	 *
 	 * @return
 	 */

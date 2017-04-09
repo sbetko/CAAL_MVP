@@ -18,7 +18,7 @@ import java.io.BufferedWriter;
 //TODO write pre-processing / ARFF formatting functions
 public class Cleaner extends Service {
     // defines output file name
-    public String arffUnlabeledFilename = "arffDataUnlabeled";
+    public String arffUnlabeledFilename = "arffDataUnlabeled.arff";
 
     // gets input filename from Reader class
     Reader reader = new Reader();
@@ -46,6 +46,7 @@ public class Cleaner extends Service {
 
         //defines arguments for StandAloneFeat (WISDM)
         String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
+        //calls WISDM api
         StandAloneFeat.main(IOString);
 
         /** PLACEHOLDER FOR SUPPLYING DATA TO WEKACLASSIFIER CLASS

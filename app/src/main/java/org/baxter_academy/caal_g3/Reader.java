@@ -14,14 +14,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 
 
 public class Reader extends Service implements SensorEventListener {
@@ -116,7 +112,8 @@ public class Reader extends Service implements SensorEventListener {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    /** READS BACK FILE TO SYSTEM.OUT FOR DEBUG **/
+
+                    /** READS BACK FILE TO SYSTEM.OUT FOR DEBUG
                     try {
                         InputStream inputStream = getBaseContext().openFileInput(rawDataFilename);
 
@@ -141,6 +138,7 @@ public class Reader extends Service implements SensorEventListener {
                     } catch (IOException e) {
                         Log.e("login activity", "Can not read file: " + e.toString());
                     }
+                     **/
 
                     /** FINISH **/
                     stopSelf();
