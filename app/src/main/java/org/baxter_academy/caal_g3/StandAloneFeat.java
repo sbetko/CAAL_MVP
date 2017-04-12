@@ -279,7 +279,7 @@ public class StandAloneFeat {
 
 			outp.flush();
 		} catch (IOException e) {
-			System.out.println("Error writing arff header: " + e.getMessage() );
+			System.out.println("Error writing arff header: " + e.getMessage());
 			System.exit(0);
 		}
 	}
@@ -295,11 +295,11 @@ public class StandAloneFeat {
 		try
 		{
 			bw = new BufferedWriter(new FileWriter(fileName));
-
 		}
+
 		catch (IOException e)
 		{
-			System.out.println("Error making arff file: " + e.getMessage() );
+			System.out.println("Error making arff file: " + e.getMessage());
 			System.exit(0);
 		}
 

@@ -16,7 +16,10 @@ import android.support.v4.content.LocalBroadcastManager;
  */
 
 public class Meta extends Service {
-    public int collectionInterval = 1000*2; //1000ms * 10 = 10 seconds
+    //1000ms * 10 = 10 second
+    public int collectionInterval = 1000*1; //TODO decide on optimal collection interval
+    //TODO define all file names for global reference
+    public String activityLogFilename = "activityLog";
 
     @Override
     public void onCreate() {
@@ -45,7 +48,7 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                //setAlarm();
+                setAlarm();
             }
         }
     };

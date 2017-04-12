@@ -65,7 +65,7 @@ public class Reader extends Service implements SensorEventListener {
     }
 
     // called by system every time a sensor event gets triggered
-    public void onSensorChanged(SensorEvent sensorEvent) {
+    public void onSensorChanged(SensorEvent sensorEvent) { //TODO increase sensor polling rate
         Sensor mySensor = sensorEvent.sensor;
 
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -81,14 +81,11 @@ public class Reader extends Service implements SensorEventListener {
                 //long diffTime = (curTime - lastUpdate);
                 lastUpdate = curTime;
                 curDataPoints = curDataPoints + 1;
-                //prints to debug
-                //System.out.println(x);
-                //System.out.println(y);
-                //System.out.println(z);
+
                 System.out.println(curDataPoints + "/" + maxDataPoints);
 
                 // saves current readings to a temporary string in memory
-                String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable
+                String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable, corresponds w/ StandAloneFeat
 
                 // writes string to file
                 try {
