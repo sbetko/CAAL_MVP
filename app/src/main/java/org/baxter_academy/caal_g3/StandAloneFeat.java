@@ -42,7 +42,7 @@ public class StandAloneFeat {
 
 	//samplingRate = Hz (number of samples collected per second)
 	//currently use 20 Hz sampling rate
-	private static int samplingRate = 5;
+	private static int samplingRate = 20;
 
 	private static BufferedWriter outp = null;
 

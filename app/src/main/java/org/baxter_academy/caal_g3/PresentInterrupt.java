@@ -19,6 +19,30 @@ import java.io.IOException;
  * Created by lyana on 1/18/2017.
  */
 
+/**
+ * Possible use cases
+ * Active -> Active
+ * Active -> Sitting
+ * Sitting -> Sitting
+ * Sitting -> Active
+ * Init. (null) -> Active
+ * Init. (null) -> Sitting
+ *
+ * baseline logic
+ * If init. & cAct = sitting
+ *      startSitTime = cTime
+ * If lastAct = active & cAct = sitting
+ *      startSitTime = cTime
+ * if lastAct = sitting
+ *      if cAct = sitting
+ *          sitDuration = cTime - startSitTime
+ *      if cAct = active
+ *          sitDuration = 0
+ *
+ * if sitDuration > durationLimit
+ *      send push notification
+ */
+
 public class PresentInterrupt extends Service {
 
     Meta meta;
@@ -41,13 +65,12 @@ public class PresentInterrupt extends Service {
                 reader.readLine();
             }
 
-            // pulls out specific name of activity
             String lastLine = reader.readLine();
             String activityLine [] = lastLine.split(",");
-            String activity = activityLine[45];
+            String activity = activityLine[45]; // pulls out specific name of activity
 
-            // logs this name (the activity) with t5mestamp
-            //TODO add logging of activity
+            // logs this name (the activity) with timestamp
+
             //File logfile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), meta.activityLogFilename);
 
             try {
@@ -55,7 +78,10 @@ public class PresentInterrupt extends Service {
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
 
-                writer.write(System.currentTimeMillis() + "," + activity); //fixme logfile not written over on restart of coreServiceChain
+                //fixme CRITICAL logfile not written over on restart of coreServiceChain
+                //this means that on a resume of the service from the app GUI or after a crash,
+                //reminder logic will be broken
+                writer.write(System.currentTimeMillis() + "," + activity);
                 writer.newLine();
                 writer.flush();
                 System.out.println(System.currentTimeMillis() + "," + activity);
