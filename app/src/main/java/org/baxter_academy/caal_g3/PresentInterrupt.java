@@ -1,11 +1,16 @@
 package org.baxter_academy.caal_g3;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import java.io.BufferedReader;
@@ -125,10 +130,29 @@ public class PresentInterrupt extends Service {
             e.printStackTrace();
         }
 
-        // check if its time to remind the user
+        /** check if its time to remind the user **/
         //TODO add notification
         if (sitDuration > maxSitTime) {
-            //send notification
+            //it's time, send notification
+            NotificationCompat.Builder mBuilder =
+                    (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                    //.setSmallIcon()
+                    .setContentTitle("Take a break!")
+                    .setContentTitle("It's time to stand");
+
+            Intent resultIntent = new Intent(this, PresentInterrupt.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(PresentInterrupt.class);
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.notify(1, mBuilder.build()); // int 1 is notification ID
         }
         stopSelf();
     }
