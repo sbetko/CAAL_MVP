@@ -46,7 +46,13 @@ import java.io.IOException;
 public class PresentInterrupt extends Service {
 
     Meta meta;
+    WekaClassifier classifier;
     public BufferedWriter writer = null;
+
+    public long startSitTime;
+    public long cTime;
+    public long sitDuration;
+    public long maxSitTime;
 
     public void onCreate() {
         System.out.println("Started Present Interrupt");
@@ -55,8 +61,7 @@ public class PresentInterrupt extends Service {
 
         File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), wekaClassifier.arffDataLabeledFilename);
 
-        // loads activity from WekaClassifier
-
+        /** loads activity from WekaClassifier file output **/
         try {
 
             BufferedReader reader = new BufferedReader(new FileReader(file)); //fixme reference to local declaration in WekaClassifier
@@ -65,27 +70,54 @@ public class PresentInterrupt extends Service {
                 reader.readLine();
             }
 
-            String lastLine = reader.readLine();
-            String activityLine [] = lastLine.split(",");
-            String activity = activityLine[45]; // pulls out specific name of activity
+            String actLine = reader.readLine();
+            String actLineSplit [] = actLine.split(",");
+            String activity = actLineSplit[45]; // pulls out specific name of activity
+            reader.close();
 
-            // logs this name (the activity) with timestamp
+            /** logs activity with timestamp **/
+            //fixme CRITICAL logfile not written over on restart of coreServiceChain
+            //fixme this means that on a resume of the service from the app GUI or after a crash,
+            //fixme reminder logic will be broken
 
             //File logfile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), meta.activityLogFilename);
-
             try {
 
+                // General activity logging
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
-
-                //fixme CRITICAL logfile not written over on restart of coreServiceChain
-                //this means that on a resume of the service from the app GUI or after a crash,
-                //reminder logic will be broken
                 writer.write(System.currentTimeMillis() + "," + activity);
                 writer.newLine();
                 writer.flush();
-                System.out.println(System.currentTimeMillis() + "," + activity);
+                System.out.println(System.currentTimeMillis() + "," + activity); //debug
 
+                // Sitting-only logging (for interrupt logic)
+                writer = new BufferedWriter(new FileWriter(
+                        new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"), true
+                ));
+
+                if (activity != "Sitting") {
+                    new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
+                }
+                else if (activity == "Sitting") {
+                    writer.write(System.currentTimeMillis() + "," + activity);
+
+                    /** begins interrupt logic **/
+                    BufferedReader sitReader = new BufferedReader(new FileReader(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"))); //fixme hardcoded log file name
+
+                    int iter = 0;
+                    while (sitReader.readLine() != null) {
+                        if (iter == 0) {
+                            String line = sitReader.readLine();
+                            String lineSplit[] = actLine.split(",");
+                            startSitTime = Long.parseLong(actLineSplit[1]);
+                        }
+                        if (iter > 0) {
+                            sitDuration = System.currentTimeMillis() - startSitTime;
+                        }
+                        iter++;
+                    }
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -94,7 +126,10 @@ public class PresentInterrupt extends Service {
         }
 
         // check if its time to remind the user
-        //TODO add timing logic
+        //TODO add notification
+        if (sitDuration > maxSitTime) {
+            //send notification
+        }
         stopSelf();
     }
 
