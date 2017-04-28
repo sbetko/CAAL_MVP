@@ -30,6 +30,8 @@ public class Meta extends Service {
         startService(readerIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(errorHandler,
+                new IntentFilter("Error"));
     }
 
     public BroadcastReceiver coreServiceChain = new BroadcastReceiver() {
@@ -49,13 +51,24 @@ public class Meta extends Service {
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
                 setAlarm();
+        }
+    }};
+
+    public BroadcastReceiver errorHandler = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String solution = intent.getStringExtra("solution");
+            System.out.println(solution + " " + context);
+            if (solution == "Restart immediately") {
+                Intent readerIntent = new Intent(Meta.this, Reader.class);
+                startService(readerIntent);
             }
         }
     };
 
     public void setAlarm() {
         Intent readerIntent = new Intent(Meta.this, Reader.class);
-        PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 ); //calling this.getApplicationContext = nullpointer
+        PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 );
         AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
         manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
     }

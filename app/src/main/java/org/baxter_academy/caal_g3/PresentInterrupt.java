@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Created by lyana on 1/18/2017.
@@ -77,7 +78,19 @@ public class PresentInterrupt extends Service {
 
             String actLine = reader.readLine();
             String actLineSplit [] = actLine.split(",");
+
+            /** If there's a classification, then proceed, otherwise restart (this is due to a BUG) **/
+            if (Objects.equals(actLine, "")) {
+                // make call to META that core service chain needs restarting
+                Log.d("sender", "Broadcasting message");
+                Intent intent = new Intent("Error");
+                // You can also include some extra data.
+                intent.putExtra("solution", "Restart immediately");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                stopSelf();
+            }
             String activity = actLineSplit[45]; // pulls out specific name of activity
+
             reader.close();
 
             /** logs activity with timestamp **/
@@ -97,18 +110,22 @@ public class PresentInterrupt extends Service {
                 System.out.println(System.currentTimeMillis() + "," + activity); //debug
 
                 // Sitting-only logging (for interrupt logic)
+                // creates new text file
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"), true
                 ));
 
-                if (activity != "Sitting") {
+                if (!Objects.equals(activity, "Sitting")) {
                     new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
-                }
-                else if (activity == "Sitting") {
+                } else if (Objects.equals(activity, "Sitting")) {
                     writer.write(System.currentTimeMillis() + "," + activity);
 
                     /** begins interrupt logic **/
-                    BufferedReader sitReader = new BufferedReader(new FileReader(new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"))); //fixme hardcoded log file name
+                    BufferedReader sitReader = new BufferedReader(
+                            new FileReader(
+                                    new File(getExternalFilesDir(
+                                            Environment.DIRECTORY_DOCUMENTS), "sittingLog")
+                            )); //fixme hardcoded log file name
 
                     int iter = 0;
                     while (sitReader.readLine() != null) {
@@ -130,8 +147,7 @@ public class PresentInterrupt extends Service {
             e.printStackTrace();
         }
 
-        /** check if its time to remind the user **/
-        //TODO add notification
+        /** Check if its time to remind the user **/
         if (sitDuration > maxSitTime) {
             //it's time, send notification
             NotificationCompat.Builder mBuilder =

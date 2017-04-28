@@ -52,8 +52,6 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_SHORT).show();
         super.onCreate();
 
-
-
         // opens file for writing
         try {
             writer = new BufferedWriter(
