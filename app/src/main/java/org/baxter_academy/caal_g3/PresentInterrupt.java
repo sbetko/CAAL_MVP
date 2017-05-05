@@ -54,11 +54,13 @@ public class PresentInterrupt extends Service {
     Meta meta;
     WekaClassifier classifier;
     public BufferedWriter writer = null;
+    public BufferedWriter sitWriter = null;
+    public String activity = null;
 
     public long startSitTime;
     public long cTime;
     public long sitDuration;
-    public long maxSitTime;
+    public long maxSitTime = 100;
 
     public void onCreate() {
         System.out.println("Started Present Interrupt");
@@ -80,7 +82,7 @@ public class PresentInterrupt extends Service {
             String actLineSplit [] = actLine.split(",");
 
             /** If there's a classification, then proceed, otherwise restart (this is due to a BUG) **/
-            if (Objects.equals(actLine, "")) {
+            if (Objects.equals(actLine, "") || (actLine.isEmpty())) {
                 // make call to META that core service chain needs restarting
                 Log.d("sender", "Broadcasting message");
                 Intent intent = new Intent("Error");
@@ -89,6 +91,17 @@ public class PresentInterrupt extends Service {
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 stopSelf();
             }
+
+            try {
+                String activity = actLineSplit[45]; // pulls out specific name of activity
+            } catch (ArrayIndexOutOfBoundsException e) {
+                Intent intent = new Intent("Error");
+                // You can also include some extra data.
+                intent.putExtra("solution", "Restart immediately");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                stopSelf();
+            }
+
             String activity = actLineSplit[45]; // pulls out specific name of activity
 
             reader.close();
@@ -99,49 +112,52 @@ public class PresentInterrupt extends Service {
             //fixme reminder logic will be broken
 
             //File logfile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), meta.activityLogFilename);
-            try {
+            // General activity logging
+            writer = new BufferedWriter(new FileWriter(
+                    new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
+            writer.write(System.currentTimeMillis() + "," + activity);
+            writer.newLine();
+            writer.flush();
+            writer.close();
+            System.out.println(System.currentTimeMillis() + "," + activity); //debug
 
-                // General activity logging
-                writer = new BufferedWriter(new FileWriter(
-                        new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
-                writer.write(System.currentTimeMillis() + "," + activity);
-                writer.newLine();
-                writer.flush();
-                System.out.println(System.currentTimeMillis() + "," + activity); //debug
+            /** Sitting-only logging (for interrupt logic, strictly for easier implementation) **/
+            // creates new text file
+            String actString = activity.toString(); //need to convert, or else .equals won't work
+            String testString = "Sitting";
+            System.out.println(actString + " = " + "Sitting");
 
-                // Sitting-only logging (for interrupt logic)
-                // creates new text file
-                writer = new BufferedWriter(new FileWriter(
+            if (!actString.equals(testString)) {
+                System.out.println(actString + " != " + "Sitting");
+                new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
+            } else { //if (Objects.equals(activity, "Sitting")) {
+                System.out.println(actString + " = " + "Sitting");
+
+                sitWriter = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"), true
                 ));
+                sitWriter.write(System.currentTimeMillis() + "," + activity);
+                sitWriter.newLine();
+                sitWriter.flush();
+                sitWriter.close();
 
-                if (!Objects.equals(activity, "Sitting")) {
-                    new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
-                } else if (Objects.equals(activity, "Sitting")) {
-                    writer.write(System.currentTimeMillis() + "," + activity);
+                /** begins interrupt logic **/
+                BufferedReader sitReader = new BufferedReader(
+                        new FileReader(
+                                new File(getExternalFilesDir(
+                                        Environment.DIRECTORY_DOCUMENTS), "sittingLog")
+                        )); //fixme hardcoded log file name
 
-                    /** begins interrupt logic **/
-                    BufferedReader sitReader = new BufferedReader(
-                            new FileReader(
-                                    new File(getExternalFilesDir(
-                                            Environment.DIRECTORY_DOCUMENTS), "sittingLog")
-                            )); //fixme hardcoded log file name
-
-                    int iter = 0;
-                    while (sitReader.readLine() != null) {
-                        if (iter == 0) {
-                            String line = sitReader.readLine();
-                            String lineSplit[] = actLine.split(",");
-                            startSitTime = Long.parseLong(actLineSplit[1]);
-                        }
-                        if (iter > 0) {
-                            sitDuration = System.currentTimeMillis() - startSitTime;
-                        }
-                        iter++;
+                int iter = 0;
+                while (sitReader.readLine() != null) {
+                    if (iter == 0) {
+                        startSitTime = Long.parseLong(actLineSplit[1]);
                     }
+                    if (iter > 0) {
+                        sitDuration = System.currentTimeMillis() - startSitTime;
+                    }
+                    iter++;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         } catch (IOException e) {
             e.printStackTrace();
