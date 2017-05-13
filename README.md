@@ -4,4 +4,6 @@ The idea behind Context Awareness for Assisted Living is to apply activity recog
 
 In order to overcome these challenges, CAAL is utilizing the WISDM Activity Recognition Dataset from Fordham University's Computer Science department to build its model(s). The Java based WEKA Waikato Environment for Knowledge Analysis suite is being used to do this.
 
-CAAL is under the umbrella of "Flex Friday," a program at Baxter Academy, a STEM highschool in Portland, Maine. Every Friday is devoted to student-driven projects. Some projects built by students, others adopted, CAAL is the work of Sage Betko.
+CAAL is under the umbrella of "Flex Friday," a program at Baxter Academy, a STEM highschool in Portland, Maine. Every Friday is devoted to student-driven projects.
+
+For more information please see here: http://lyanauz.wixsite.com/betko/single-post/2016/12/23/Bridging-AI-and-Smartphones-to-Help-Build-Healthy-Habits
