@@ -50,7 +50,7 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                setAlarm();
+                setAlarm(false); // false means do not cancel
         }
     }};
 
@@ -66,11 +66,16 @@ public class Meta extends Service {
         }
     };
 
-    public void setAlarm() {
+    public void setAlarm(boolean cancel) {
         Intent readerIntent = new Intent(Meta.this, Reader.class);
         PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 );
         AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
+        // called with cancel = TRUE by PresentInterrupt when service is stopped on user command
+        if (cancel) {
+            manager.cancel(pintent);
+        } else {
+            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
+        }
     }
 
     @Override

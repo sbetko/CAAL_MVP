@@ -11,11 +11,10 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle icicle) {
+        final Meta meta = new Meta();
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
         System.out.println("Started MainActivity");
-        Intent mServiceIntent = new Intent(this.getApplicationContext(), Meta.class); // DELETE
-        //startService(mServiceIntent); // DELETE
         final ToggleButton toggle = (ToggleButton) findViewById(R.id.startbutton);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -25,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     stopService(new Intent(buttonView.getContext(), Meta.class));
                     Toast.makeText(buttonView.getContext(), "Stopped meta", Toast.LENGTH_SHORT).show();
-
                     stopService(new Intent(buttonView.getContext(), Reader.class));
+                    meta.setAlarm(true);
                 }
             }
         });
