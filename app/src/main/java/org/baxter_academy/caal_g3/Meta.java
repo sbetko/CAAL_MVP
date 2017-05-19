@@ -20,13 +20,18 @@ public class Meta extends Service {
     public int collectionInterval = 1000*1; //TODO decide on optimal collection interval
     //TODO define all file names for global reference
     public String activityLogFilename = "activityLog";
+    public Intent readerIntent;
+    public PendingIntent pintent;
+    public AlarmManager manager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         //for coreServiceChain
-        Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
+        readerIntent = new Intent(getApplicationContext(), Reader.class);
+        pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0);
+        manager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
+
         startService(readerIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
@@ -50,7 +55,7 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                setAlarm(false); // false means do not cancel
+                setAlarm();
         }
     }};
 
@@ -66,16 +71,8 @@ public class Meta extends Service {
         }
     };
 
-    public void setAlarm(boolean cancel) {
-        Intent readerIntent = new Intent(Meta.this, Reader.class);
-        PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 );
-        AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
-        // called with cancel = TRUE by PresentInterrupt when service is stopped on user command
-        if (cancel) {
-            manager.cancel(pintent);
-        } else {
+    public void setAlarm() {
             manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
-        }
     }
 
     @Override

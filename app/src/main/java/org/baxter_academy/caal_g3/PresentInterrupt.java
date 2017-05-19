@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Objects;
 
 /**
@@ -61,7 +62,7 @@ public class PresentInterrupt extends Service {
     public long startSitTime;
     public long cTime;
     public long sitDuration;
-    public long maxSitTime = 100;
+    public long maxSitTime = 10000;
 
     public void onCreate() {
         System.out.println("Started Present Interrupt");
@@ -145,7 +146,38 @@ public class PresentInterrupt extends Service {
                 if (sitDuration > maxSitTime) {
                     //it's time, send notification
                     System.out.println("Sent Notification");
-                    //also, write over sittingLog
+                    NotificationCompat.Builder mBuilder =
+                            (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                                    .setSmallIcon(R.drawable.startbutton)
+                                    .setContentTitle("Take a break!")
+                                    .setContentText("It's time to get moving!")
+                                    .setPriority(2); //PRIORITY_MAX
+                    // Creates an explicit intent for an Activity in your app
+                    Intent resultIntent = new Intent(this, MainActivity.class);
+
+                    // The stack builder object will contain an artificial back stack for the
+                    // started Activity.
+                    // This ensures that navigating backward from the Activity leads out of
+                    // your application to the Home screen.
+                    TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                    // Adds the back stack for the Intent (but not the Intent itself)
+                    stackBuilder.addParentStack(MainActivity.class);
+                    // Adds the Intent that starts the Activity to the top of the stack
+                    stackBuilder.addNextIntent(resultIntent);
+                    PendingIntent resultPendingIntent =
+                            stackBuilder.getPendingIntent(
+                                    0,
+                                    PendingIntent.FLAG_UPDATE_CURRENT
+                            );
+                    mBuilder.setContentIntent(resultPendingIntent);
+                    NotificationManager mNotificationManager =
+                            (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    // mId allows you to update the notification later on.
+                    mNotificationManager.notify(1, mBuilder.build());
+                    //also, write over sittingLog TODO verify that this works
+                    new PrintWriter(
+                            new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog")
+                    );
                 }
                 stopSelf();
             } else {

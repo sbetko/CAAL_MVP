@@ -25,7 +25,8 @@
         android:layout_height="100pt"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:id="@+id/startbutton" />
+        android:id="@+id/startbutton"
+        android:background="@drawable/startbutton" />
 
  <!--   <Button android:text="Start"
         android:id="@+id/Button01"
