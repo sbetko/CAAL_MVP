@@ -26,30 +26,6 @@ import java.util.Objects;
  * Created by lyana on 1/18/2017.
  */
 
-/**
- * Possible use cases
- * Active -> Active
- * Active -> Sitting
- * Sitting -> Sitting
- * Sitting -> Active
- * Init. (null) -> Active
- * Init. (null) -> Sitting
- *
- * baseline logic
- * If init. & cAct = sitting
- *      startSitTime = cTime
- * If lastAct = active & cAct = sitting
- *      startSitTime = cTime
- * if lastAct = sitting
- *      if cAct = sitting
- *          sitDuration = cTime - startSitTime
- *      if cAct = active
- *          sitDuration = 0
- *
- * if sitDuration > durationLimit
- *      send push notification
- */
-
 public class PresentInterrupt extends Service {
 
     Meta meta;
@@ -107,12 +83,11 @@ public class PresentInterrupt extends Service {
                 // creates new text file
                 String actString = activity.toString(); //need to convert, or else .equals won't work
                 String testString = "Sitting";
-                System.out.println(actString + " = " + "Sitting");
 
                 if (!actString.equals(testString)) {
                     System.out.println(actString + " != " + "Sitting");
                     new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
-                } else { //if (Objects.equals(activity, "Sitting")) {
+                } else {
                     System.out.println(actString + " = " + "Sitting");
 
                     sitWriter = new BufferedWriter(new FileWriter(
@@ -183,7 +158,7 @@ public class PresentInterrupt extends Service {
             } else {
                 // make call to META that core service chain needs restarting
                 noActivity = true;
-                System.out.println("Restarted");
+                System.out.println("Restarted due to missing classification");
                 Intent intent = new Intent("Error");
                 intent.putExtra("solution", "Restart immediately");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(intent);

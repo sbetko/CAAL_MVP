@@ -108,7 +108,6 @@ public class WekaClassifier extends Service {
 
         // writes to file
         String toWrite = labeled.toString();
-        System.out.println(toWrite);
         try {
             if (writer != null) {
                 writer.write(toWrite);

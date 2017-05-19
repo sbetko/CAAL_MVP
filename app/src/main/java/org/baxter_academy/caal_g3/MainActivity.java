@@ -14,13 +14,11 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 public class MainActivity extends AppCompatActivity {
-    Meta meta = new Meta();
-
     @Override
     protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         setContentView(R.layout.activity_main);
-        System.out.println("Started MainActivity");
+        System.out.println("********************* Started MainActivity *********************");
         final ToggleButton toggle = (ToggleButton) findViewById(R.id.startbutton);
         Intent readerIntent = new Intent(getApplicationContext(), Reader.class);
         final PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0);

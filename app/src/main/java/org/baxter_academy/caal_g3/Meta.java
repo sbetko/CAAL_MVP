@@ -19,7 +19,6 @@ public class Meta extends Service {
     //1000ms * 10 = 10 second
     public int collectionInterval = 1000*1; //TODO decide on optimal collection interval
     //TODO define all file names for global reference
-    public String activityLogFilename = "activityLog";
     public Intent readerIntent;
     public PendingIntent pintent;
     public AlarmManager manager;
@@ -85,7 +84,6 @@ public class Meta extends Service {
         System.out.println("Stopped Meta");
 
         // stops reader in case it is running
-        //TODO does Reader need to scrub the rawData file?
         Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
         stopService(readerIntent);
 

@@ -27,7 +27,6 @@ public class Cleaner extends Service {
         System.out.println("***********************STARTED CLEANER***********************");
         String rawDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + rawDataFilename; //todo declare path in Reader
         String arffDataFilePath = getApplicationContext().getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS) + "/" + arffUnlabeledFilename; //cannot declare in outer scope because of illegal forward reference
-        System.out.println("Started Cleaner");
 
         //defines arguments for StandAloneFeat (WISDM)
         String[] IOString = new String[] {rawDataFilePath, arffDataFilePath};
@@ -36,7 +35,6 @@ public class Cleaner extends Service {
 
         /** FINISH **/
         stopSelf();
-
     }
 
     @Nullable
