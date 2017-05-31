@@ -33,7 +33,7 @@ public class WekaClassifier extends Service {
 
         /** ASSIGN / LOAD RESOURCES **/
         // assigns classifier
-        InputStream classifier = getResources().openRawResource(R.raw.j48allactivityallfeature);
+        InputStream classifier = getResources().openRawResource(R.raw.rf_full);
 
         Classifier cls = null;
         try {
