@@ -22,16 +22,15 @@ import java.io.IOException;
 
 public class Reader extends Service implements SensorEventListener {
     // constants for sensor stuff
-    public int maxDataPoints = 50;
+    public int maxDataPoints = 200;
     public int curDataPoints = 0;
-    public double sensorRate = 0.01;
+    public int sensorDelay = 50000; //ms
 
     // stuff for sensor calls
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
     // variables for sensor data
-    private long lastUpdate = 0;
     // sets up file object for storing accelerometer data
     public String rawDataFilename = "rawData";
     public BufferedWriter writer = null;
@@ -61,10 +60,8 @@ public class Reader extends Service implements SensorEventListener {
         // sensor info
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, sensorDelay);
     }
-
-    // called by system every time a sensor event gets triggered
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
@@ -76,76 +73,39 @@ public class Reader extends Service implements SensorEventListener {
             // gets uptime of system
             long curTime = SystemClock.elapsedRealtime();
 
-            // if enough time has passed since last data point was collected
-            if ((curTime - lastUpdate) > sensorRate) {
-                //long diffTime = (curTime - lastUpdate);
-                lastUpdate = curTime;
-                curDataPoints = curDataPoints + 1;
-                //prints to debug
-                //System.out.println(x);
-                //System.out.println(y);
-                //System.out.println(z);
-                System.out.println(curDataPoints + "/" + maxDataPoints);
+            curDataPoints = curDataPoints + 1;
+            System.out.println(curDataPoints + "/" + maxDataPoints + ", " + curTime);
 
-                // saves current readings to a temporary string in memory
-                String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable
+            // saves current readings to a temporary string in memory
+            String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable, corresponds w/ StandAloneFeat
 
-                // writes string to file
+            // writes string to file
+            try {
+                if (writer != null) {
+                    writer.write(toWrite);
+                    writer.newLine();
+                    writer.flush();
+
+                } else {
+                    System.out.println("file reference is null");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // if its time to stop reading sensor data
+            if (curDataPoints >= maxDataPoints) {
+
                 try {
-                    if (writer != null) {
-                        writer.write(toWrite);
-                        writer.newLine();
-                        writer.flush();
-
-                    } else {
-                        System.out.println("file reference is null");
-                    }
+                    writer.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                // if its time to stop reading sensor data
-                if (curDataPoints >= maxDataPoints) {
-
-                    try {
-                        writer.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    /** READS BACK FILE TO SYSTEM.OUT FOR DEBUG
-                    try {
-                        InputStream inputStream = getBaseContext().openFileInput(rawDataFilename);
-
-                        if ( inputStream != null ) {
-                            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                            String receiveString = "";
-                            StringBuilder stringBuilder = new StringBuilder();
-
-                            while ( (receiveString = bufferedReader.readLine()) != null ) {
-                                stringBuilder.append(receiveString);
-                            }
-
-                            inputStream.close();
-                            String ret;
-                            ret = stringBuilder.toString();
-                            System.out.print(ret);
-                        }
-                    }
-                    catch (FileNotFoundException e) {
-                        Log.e("login activity", "File not found: " + e.toString());
-                    } catch (IOException e) {
-                        Log.e("login activity", "Can not read file: " + e.toString());
-                    }
-                     **/
-
-                    /** FINISH **/
-                    stopSelf();
-                    }
+                stopSelf();
             }
         }
     }
+
 
     // Sensor requirements
     @Override
@@ -158,9 +118,6 @@ public class Reader extends Service implements SensorEventListener {
         System.out.println("Stopped Reader");
         sensorManager.unregisterListener(this); // stops sensorManager
 
-        // Intent cleanerIntent = new Intent(this.getBaseContext(), Cleaner.class);
-        // startService(cleanerIntent);
-
         Log.d("sender", "Broadcasting message");
         Intent intent = new Intent("FinishedWork");
         // You can also include some extra data.
@@ -168,21 +125,4 @@ public class Reader extends Service implements SensorEventListener {
         intent.putExtra("status", "Reader finished");
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
-
-/**
-  * experimental method
-    private void getAccelerometer(SensorEvent event) {
-        float[] values = event.values;
-        // Movement
-        float x = values[0];
-        float y = values[1];
-        float z = values[2];
-        System.out.println(x);
-        System.out.println(y);
-        System.out.println(z);
-
-        long actualTime = System.currentTimeMillis();
-
-    }
- **/
 }

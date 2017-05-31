@@ -16,17 +16,26 @@ import android.support.v4.content.LocalBroadcastManager;
  */
 
 public class Meta extends Service {
-    public int collectionInterval = 1000*2; //1000ms * 10 = 10 seconds
+    //1000ms * 10 = 10 second
+    public int collectionInterval = 1000*1; //TODO decide on optimal collection interval
+    //TODO define all file names for global reference
+    public Intent readerIntent;
+    public PendingIntent pintent;
+    public AlarmManager manager;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
         //for coreServiceChain
-        Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
+        readerIntent = new Intent(getApplicationContext(), Reader.class);
+        pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0);
+        manager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
+
         startService(readerIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
+        LocalBroadcastManager.getInstance(this).registerReceiver(errorHandler,
+                new IntentFilter("Error"));
     }
 
     public BroadcastReceiver coreServiceChain = new BroadcastReceiver() {
@@ -45,16 +54,24 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startService(presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
-                //setAlarm();
+                setAlarm();
+        }
+    }};
+
+    public BroadcastReceiver errorHandler = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String solution = intent.getStringExtra("solution");
+            System.out.println(solution + " " + context);
+            if (solution == "Restart immediately") {
+                Intent readerIntent = new Intent(Meta.this, Reader.class);
+                startService(readerIntent);
             }
         }
     };
 
     public void setAlarm() {
-        Intent readerIntent = new Intent(Meta.this, Reader.class);
-        PendingIntent pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0 ); //calling this.getApplicationContext = nullpointer
-        AlarmManager manager = (AlarmManager)(this.getSystemService(Context.ALARM_SERVICE ));
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
+            manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + collectionInterval, pintent);
     }
 
     @Override
@@ -67,7 +84,6 @@ public class Meta extends Service {
         System.out.println("Stopped Meta");
 
         // stops reader in case it is running
-        //TODO does Reader need to scrub the rawData file?
         Intent readerIntent = new Intent(this.getApplicationContext(), Reader.class);
         stopService(readerIntent);
 
