@@ -122,7 +122,7 @@ public class PresentInterrupt extends Service {
                     System.out.println("Sent Notification");
                     NotificationCompat.Builder mBuilder =
                             (NotificationCompat.Builder) new NotificationCompat.Builder(this)
-                                    .setSmallIcon(R.drawable.startbutton)
+                                    .setSmallIcon(R.mipmap.ic_launcher)
                                     .setContentTitle("Take a break!")
                                     .setContentText("It's time to get moving!")
                                     .setPriority(2); //PRIORITY_MAX
