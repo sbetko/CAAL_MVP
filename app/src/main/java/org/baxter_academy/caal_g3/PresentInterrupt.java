@@ -28,15 +28,11 @@ import java.util.Objects;
 
 public class PresentInterrupt extends Service {
 
-    Meta meta;
-    WekaClassifier classifier;
     public BufferedWriter writer = null;
     public BufferedWriter sitWriter = null;
-    public String activity = null;
     public boolean noActivity = false;
 
     public long startSitTime;
-    public long cTime;
     public long sitDuration;
     public long maxSitTime = 10000;
 
@@ -45,11 +41,14 @@ public class PresentInterrupt extends Service {
 
         final WekaClassifier wekaClassifier = new WekaClassifier();
 
-        File file = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), wekaClassifier.arffDataLabeledFilename);
+        File file = new File(getExternalFilesDir(
+                Environment.DIRECTORY_DOCUMENTS), wekaClassifier.arffDataLabeledFilename
+        );
 
         /** loads activity from WekaClassifier file output **/
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file)); //fixme reference to local declaration in WekaClassifier
+            //TODO move reference from WekaClassifier to GlobalConstants
+            BufferedReader reader = new BufferedReader(new FileReader(file));
 
             for (int i = 1; i < 51; i++) {
                 reader.readLine();
@@ -77,7 +76,7 @@ public class PresentInterrupt extends Service {
                 writer.newLine();
                 writer.flush();
                 writer.close();
-                System.out.println(System.currentTimeMillis() + "," + activity); //debug
+                System.out.println("*************** " + System.currentTimeMillis() + "," + activity); //debug
 
                 /** Sitting-only logging (for interrupt logic, strictly for easier implementation) **/
                 // creates new text file
@@ -85,10 +84,10 @@ public class PresentInterrupt extends Service {
                 String testString = "Sitting";
 
                 if (!actString.equals(testString)) {
-                    System.out.println(actString + " != " + "Sitting");
+                    //System.out.println(actString + " != " + "Sitting");
                     new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
                 } else {
-                    System.out.println(actString + " = " + "Sitting");
+                    //System.out.println(actString + " = " + "Sitting");
 
                     sitWriter = new BufferedWriter(new FileWriter(
                             new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"), true
