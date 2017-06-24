@@ -58,8 +58,10 @@ public class Meta extends Service {
                 startWakefulService(context, presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
                 setAlarm();
+            }
         }
-    }};
+
+    };
 
     public BroadcastReceiver errorHandler = new BroadcastReceiver() {
         @Override

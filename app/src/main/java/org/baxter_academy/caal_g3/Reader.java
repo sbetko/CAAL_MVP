@@ -77,7 +77,7 @@ public class Reader extends Service implements SensorEventListener {
             System.out.println(curDataPoints + "/" + maxDataPoints + ", " + curTime);
 
             // saves current readings to a temporary string in memory
-            String toWrite = "User" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable, corresponds w/ StandAloneFeat
+            String toWrite = "1" + "," + "NoLabel" + "," + curTime + "," + x + "," + y + "," + z + ";"; //fixme hardcoded user variable, corresponds w/ StandAloneFeat
 
             // writes string to file
             try {

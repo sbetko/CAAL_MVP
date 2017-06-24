@@ -2,6 +2,7 @@ package org.baxter_academy.caal_g3;
 
 import android.app.IntentService;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
