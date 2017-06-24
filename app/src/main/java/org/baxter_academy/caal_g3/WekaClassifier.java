@@ -1,6 +1,8 @@
 package org.baxter_academy.caal_g3;
 
+import android.app.IntentService;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Environment;
 import android.os.IBinder;
@@ -23,17 +25,21 @@ import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
+import static java.lang.Thread.currentThread;
 
-public class WekaClassifier extends Service {
+
+public class WekaClassifier extends IntentService {
     public String arffDataLabeledFilename = "arffDataLabeled";
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
+    public WekaClassifier() {
+        super("WekaClassifier");
+    }
 
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
         /** ASSIGN / LOAD RESOURCES **/
         // assigns classifier
-        InputStream classifier = getResources().openRawResource(R.raw.rf_full);
+        InputStream classifier = getResources().openRawResource(R.raw.rf_full_csc);
 
         Classifier cls = null;
         try {
@@ -121,9 +127,6 @@ public class WekaClassifier extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /** FINISH **/
-        stopSelf();
     }
 
     public void onDestroy() {
@@ -139,4 +142,5 @@ public class WekaClassifier extends Service {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
 }

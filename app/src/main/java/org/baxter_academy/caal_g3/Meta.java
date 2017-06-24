@@ -11,13 +11,15 @@ import android.os.IBinder;
 import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 
+import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
+
 /**
  * Created by Baxter on 1/13/2017.
  */
 
 public class Meta extends Service {
     //1000ms * 10 = 10 second
-    public int collectionInterval = 1000*1; //TODO decide on optimal collection interval
+    public int collectionInterval = 1*1; //Collection interval of 1ms
     //TODO define all file names for global reference
     public Intent readerIntent;
     public PendingIntent pintent;
@@ -31,6 +33,7 @@ public class Meta extends Service {
         pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0);
         manager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
 
+        // by starting reader service, the coreServiceChain is entered until user exits
         startService(readerIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
@@ -46,17 +49,19 @@ public class Meta extends Service {
             System.out.println(status + " " + context);
             if (status == "Reader finished") {
                 Intent cleanerIntent = new Intent(context, Cleaner.class);
-                startService(cleanerIntent);
+                startWakefulService(context, cleanerIntent);
             } else if (status == "Cleaner finished") {
                 Intent wekaClassifierIntent = new Intent(context, WekaClassifier.class);
-                startService(wekaClassifierIntent);
+                startWakefulService(context, wekaClassifierIntent);
             } else if (status == "WekaClassifier finished") {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
-                startService(presentInterruptIntent);
+                startWakefulService(context, presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
                 setAlarm();
+            }
         }
-    }};
+
+    };
 
     public BroadcastReceiver errorHandler = new BroadcastReceiver() {
         @Override
@@ -65,7 +70,7 @@ public class Meta extends Service {
             System.out.println(solution + " " + context);
             if (solution == "Restart immediately") {
                 Intent readerIntent = new Intent(Meta.this, Reader.class);
-                startService(readerIntent);
+                startWakefulService(context, readerIntent);
             }
         }
     };

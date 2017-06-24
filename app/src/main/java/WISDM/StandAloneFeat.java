@@ -317,7 +317,7 @@ public class StandAloneFeat {
 		System.out.println("Started reading file ");
 
 		boolean more = true; // more in the file?
-		String cusr = "User"; // user of current tuple
+		String cusr = "1"; // user of current tuple, must include integer for Long.valueOf
 		String cact = null; // activity of current tuple
 		float[] x = new float[(windowSize*samplingRate)]; // holds the accelerometer data for a single tuple
 		float[] y = new float[(windowSize*samplingRate)];
