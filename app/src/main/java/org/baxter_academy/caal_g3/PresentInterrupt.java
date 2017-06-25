@@ -1,24 +1,18 @@
 package org.baxter_academy.caal_g3;
 
+import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.media.AudioFormat;
+import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.IBinder;
-import android.speech.tts.SynthesisCallback;
-import android.speech.tts.TextToSpeech;
-import android.support.annotation.IntDef;
-import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,9 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Locale;
 import java.util.Objects;
-import java.util.Random;
 
 import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
 
@@ -37,7 +29,7 @@ import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulSe
  * Created by lyana on 1/18/2017.
  */
 
-public class PresentInterrupt extends Service implements SynthesisCallback, TextToSpeech.OnInitListener {
+public class PresentInterrupt extends IntentService{
 
     public BufferedWriter writer = null;
     public BufferedWriter sitWriter = null;
@@ -48,11 +40,12 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
     public long maxSitTime = 10000;
 
     public String actString;
-    public TextToSpeech tts;
 
-    public void onCreate() {
-        tts = new TextToSpeech(this, this);
+    public PresentInterrupt() {
+        super("PresentInterrupt");
+    }
 
+    public void onHandleIntent(@Nullable Intent intent) {
         System.out.println("Started Present Interrupt");
 
         final WekaClassifier wekaClassifier = new WekaClassifier();
@@ -80,15 +73,13 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
                 noActivity = false;
                 String activity = actLineSplit[45]; // pulls out specific name of activity
                 actString = activity.toString(); //need to convert, or else .equals won't work
+
                 String testString = "Sitting";
 
-                // starts Speech Synthesizer in own service, passes activity to speak in intent
-                /**
-                Intent mintent = new Intent(this, SpeechSynthesizer.class);
-                mintent.putExtra("Activity", activity);
+                // calls SpeechService w/ activity
+                Intent mintent = new Intent(this, SpeechService.class);
+                mintent.putExtra("Activity", actString);
                 startWakefulService(this, mintent);
-                 **/
-
 
                 /** logs activity with timestamp **/
                 //fixme CRITICAL logfile not written over on restart of coreServiceChain
@@ -107,14 +98,9 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
 
                 /** Sitting-only logging (for interrupt logic, strictly for easier implementation) **/
                 // creates new text file
-
-
                 if (!actString.equals(testString)) {
-                    //System.out.println(actString + " != " + "Sitting");
                     new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"); //RESET LOG
                 } else {
-                    //System.out.println(actString + " = " + "Sitting");
-
                     sitWriter = new BufferedWriter(new FileWriter(
                             new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog"), true
                     ));
@@ -182,10 +168,6 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
             } else {
                 // make call to META that core service chain needs restarting
                 noActivity = true;
-                System.out.println("Restarted due to missing classification");
-                Intent intent = new Intent("Error");
-                intent.putExtra("solution", "Restart immediately");
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
                 stopSelf();
             }
 
@@ -195,14 +177,18 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
     }
 
     public void onDestroy() {
-        tts.stop();
-        tts.shutdown();
         if (!noActivity) {
             Log.d("sender", "Broadcasting message");
             Intent intent = new Intent("FinishedWork");
             // You can also include some extra data.
             intent.putExtra("status", "PresentInterrupt finished");
             LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+        } else {
+            // make call to META that core service chain needs restarting
+            System.out.println("Restarted due to missing classification");
+            Intent intent = new Intent("Error");
+            intent.putExtra("solution", "Restart immediately");
+            LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
         }
     }
 
@@ -210,54 +196,5 @@ public class PresentInterrupt extends Service implements SynthesisCallback, Text
     @Override
     public IBinder onBind(Intent intent) {
         return null;
-    }
-
-    @Override
-    public void onInit(int status) {
-        if (status == TextToSpeech.SUCCESS && actString != null) {
-            tts.setLanguage(Locale.US);
-            tts.speak(actString, TextToSpeech.QUEUE_FLUSH, null);
-        }
-    }
-
-    @Override
-    public int getMaxBufferSize() {
-        return 0;
-    }
-
-    @Override
-    public int start(int sampleRateInHz, int audioFormat, @IntRange(from = 1, to = 2) int channelCount) {
-        return 0;
-    }
-
-    @Override
-    public int audioAvailable(byte[] buffer, int offset, int length) {
-        return 0;
-    }
-
-    @Override
-    public int done() {
-        return 0;
-    }
-
-    @Override
-    public void error() {
-
-    }
-
-    @Override
-    public void error(int errorCode) {
-
-    }
-
-    @Override
-    public boolean hasStarted() {
-        return false;
-    }
-
-    @Override
-    public boolean hasFinished() {
-        stopSelf();
-        return false;
     }
 }

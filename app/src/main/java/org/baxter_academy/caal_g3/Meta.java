@@ -70,7 +70,7 @@ public class Meta extends Service {
             System.out.println(solution + " " + context);
             if (solution == "Restart immediately") {
                 Intent readerIntent = new Intent(Meta.this, Reader.class);
-                startWakefulService(context, readerIntent);
+                startWakefulService(Meta.this, readerIntent);
             }
         }
     };
