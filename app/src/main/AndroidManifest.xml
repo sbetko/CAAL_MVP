@@ -46,6 +46,7 @@
             android:name=".SpeechService"
             android:enabled="true"
             android:exported="false" />
+        <service android:name=".LogAccesser" />
     </application>
 
 </manifest>

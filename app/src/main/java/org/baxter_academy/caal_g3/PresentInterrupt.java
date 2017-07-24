@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Objects;
 
 import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
@@ -70,6 +71,7 @@ public class PresentInterrupt extends IntentService{
 
             /** If there's a classification, then proceed, otherwise restart (this is due to a BUG) **/
             if (!Objects.equals(actLine, "") || !(actLine.isEmpty())) {
+                Date date = new Date();
                 noActivity = false;
                 String activity = actLineSplit[45]; // pulls out specific name of activity
                 actString = activity.toString(); //need to convert, or else .equals won't work
@@ -90,7 +92,12 @@ public class PresentInterrupt extends IntentService{
                 // General activity logging
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
-                writer.write(System.currentTimeMillis() + "," + activity);
+                writer.write(
+                        System.currentTimeMillis() + "," +
+                                date + "," +
+                                activity + ","
+                );
+
                 writer.newLine();
                 writer.flush();
                 writer.close();
@@ -131,6 +138,7 @@ public class PresentInterrupt extends IntentService{
                 /** Check if its time to remind the user **/
                 if (sitDuration > maxSitTime) {
                     //it's time, send notification
+                    //TODO fix vibration in notification
                     System.out.println("Sent Notification");
                     NotificationCompat.Builder mBuilder =
                             (NotificationCompat.Builder) new NotificationCompat.Builder(this)
