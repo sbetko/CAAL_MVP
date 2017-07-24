@@ -14,15 +14,23 @@ import android.support.annotation.Nullable;
 
 public class SpeechService extends Service {
 
-    public TextToSpeech tts;
     public String activity;
 
-    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         System.out.println("************ Started SpeechService");
+
+        // gets activity String sent in Intent
         Bundle bundle = intent.getExtras();
+
+        // sets activity variable with string from Intent
         activity = bundle.getString("Activity");
+
+
+        // This is how LogAccesser may be used in this case. It is not 100% reliable however, so
+        // getting the activity from the Intent is preferred.
+        // LogAccesser log = new LogAccesser(this);
+        // String [] recent = log.getMostRecent();
 
         Context context = getApplicationContext();
         TtsProviderFactory ttsProviderImpl = TtsProviderFactory.getInstance();
@@ -30,6 +38,7 @@ public class SpeechService extends Service {
             ttsProviderImpl.init(context);
             ttsProviderImpl.say(activity);
         }
+
         return START_REDELIVER_INTENT;
 
     }

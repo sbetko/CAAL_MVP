@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.Objects;
 
 import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
@@ -37,7 +38,7 @@ public class PresentInterrupt extends IntentService{
 
     public long startSitTime;
     public long sitDuration;
-    public long maxSitTime = 10000;
+    public long maxSitTime = 1000000000;
 
     public String actString;
 
@@ -70,6 +71,7 @@ public class PresentInterrupt extends IntentService{
 
             /** If there's a classification, then proceed, otherwise restart (this is due to a BUG) **/
             if (!Objects.equals(actLine, "") || !(actLine.isEmpty())) {
+                Date date = new Date();
                 noActivity = false;
                 String activity = actLineSplit[45]; // pulls out specific name of activity
                 actString = activity.toString(); //need to convert, or else .equals won't work
@@ -90,7 +92,12 @@ public class PresentInterrupt extends IntentService{
                 // General activity logging
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
-                writer.write(System.currentTimeMillis() + "," + activity);
+                writer.write(
+                        System.currentTimeMillis() + "," +
+                                date + "," +
+                                activity + ","
+                );
+
                 writer.newLine();
                 writer.flush();
                 writer.close();
@@ -130,14 +137,18 @@ public class PresentInterrupt extends IntentService{
 
                 /** Check if its time to remind the user **/
                 if (sitDuration > maxSitTime) {
+                    
                     //it's time, send notification
+                    //TODO fix vibration in notification
                     System.out.println("Sent Notification");
                     NotificationCompat.Builder mBuilder =
                             (NotificationCompat.Builder) new NotificationCompat.Builder(this)
                                     .setSmallIcon(R.drawable.appicon)
                                     .setContentTitle("Take a break!")
                                     .setContentText("It's time to get moving!")
+                                    .setVibrate(new long[] {0, 100, 10, 100, 10, 100})
                                     .setPriority(2); //PRIORITY_MAX
+
                     // Creates an explicit intent for an Activity in your app
                     Intent resultIntent = new Intent(this, MainActivity.class);
 
@@ -146,8 +157,10 @@ public class PresentInterrupt extends IntentService{
                     // This ensures that navigating backward from the Activity leads out of
                     // your application to the Home screen.
                     TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
                     // Adds the back stack for the Intent (but not the Intent itself)
                     stackBuilder.addParentStack(MainActivity.class);
+
                     // Adds the Intent that starts the Activity to the top of the stack
                     stackBuilder.addNextIntent(resultIntent);
                     PendingIntent resultPendingIntent =
@@ -158,8 +171,10 @@ public class PresentInterrupt extends IntentService{
                     mBuilder.setContentIntent(resultPendingIntent);
                     NotificationManager mNotificationManager =
                             (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
                     // mId allows you to update the notification later on.
                     mNotificationManager.notify(1, mBuilder.build());
+
                     //also, write over sittingLog TODO verify that this works
                     new PrintWriter(
                             new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "sittingLog")
