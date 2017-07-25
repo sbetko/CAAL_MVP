@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -21,8 +20,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.TimeZone;
 
 import static android.support.v4.content.WakefulBroadcastReceiver.startWakefulService;
 
@@ -71,7 +72,8 @@ public class PresentInterrupt extends IntentService{
 
             /** If there's a classification, then proceed, otherwise restart (this is due to a BUG) **/
             if (!Objects.equals(actLine, "") || !(actLine.isEmpty())) {
-                Date date = new Date();
+                Calendar date = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+
                 noActivity = false;
                 String activity = actLineSplit[45]; // pulls out specific name of activity
                 actString = activity.toString(); //need to convert, or else .equals won't work
@@ -88,7 +90,6 @@ public class PresentInterrupt extends IntentService{
                 //fixme this means that on a resume of the service from the app GUI or after a crash,
                 //fixme reminder logic will be broken
 
-                //File logfile = new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), meta.activityLogFilename);
                 // General activity logging
                 writer = new BufferedWriter(new FileWriter(
                         new File(getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "activityLog"), true)); //fixme hardcoded log file name
@@ -137,7 +138,7 @@ public class PresentInterrupt extends IntentService{
 
                 /** Check if its time to remind the user **/
                 if (sitDuration > maxSitTime) {
-                    
+
                     //it's time, send notification
                     //TODO fix vibration in notification
                     System.out.println("Sent Notification");

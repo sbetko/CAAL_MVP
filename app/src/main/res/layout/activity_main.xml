@@ -8,25 +8,30 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="org.baxter_academy.caal_g3.MainActivity">
+    tools:context=".MainActivity">
+
+    <com.jjoe64.graphview.GraphView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:id="@+id/graph" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/service_prompt"
         android:id="@+id/textView"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="53dp" />
+        android:layout_above="@+id/startbutton"
+        android:layout_alignStart="@+id/startbutton"
+        android:layout_marginStart="28dp" />
 
     <ToggleButton
         android:text="Start/stop main service"
-        android:layout_width="100pt"
-        android:layout_height="100pt"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
+        android:layout_width="50pt"
+        android:layout_height="25pt"
+        android:backgroundTint="@color/colorAccent"
         android:id="@+id/startbutton"
-        android:background="@drawable/startbutton" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
  <!--   <Button android:text="Start"
         android:id="@+id/Button01"

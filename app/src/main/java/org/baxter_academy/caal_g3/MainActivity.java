@@ -13,6 +13,12 @@ import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -38,6 +44,17 @@ public class MainActivity extends AppCompatActivity {
                     manager.cancel(pintent);
                 }
             }
+        });
+
+        GraphView graph = (GraphView) findViewById(R.id.graph);
+
+        LogAccesser log = new LogAccesser(this);
+        ArrayList<ArrayList> dataTable = log.getToday();
+
+        // you can directly pass Date objects to DataPoint-Constructor
+        // this will convert the Date to double via Date#getTime()
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
+
         });
     }
 

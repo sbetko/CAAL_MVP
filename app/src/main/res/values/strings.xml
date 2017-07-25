@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">CAAL MVP</string>
-    <string name="service_prompt">Press the button to start tracking</string>
+    <string name="service_prompt">Tracking</string>
 </resources>
