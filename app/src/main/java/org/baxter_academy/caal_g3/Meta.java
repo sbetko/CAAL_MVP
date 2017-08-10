@@ -21,7 +21,7 @@ public class Meta extends Service {
     //1000ms * 10 = 10 second
     public int collectionInterval = 1*1; //Collection interval of 1ms
     //TODO define all file names for global reference
-    public Intent readerIntent;
+    public Intent pocketDetectorIntent;
     public PendingIntent pintent;
     public AlarmManager manager;
 
@@ -29,12 +29,12 @@ public class Meta extends Service {
     public void onCreate() {
         super.onCreate();
         //for coreServiceChain
-        readerIntent = new Intent(getApplicationContext(), Reader.class);
-        pintent = PendingIntent.getService(this.getBaseContext(), 0, readerIntent, 0);
+        pocketDetectorIntent = new Intent(getApplicationContext(), PocketDetector.class);
+        pintent = PendingIntent.getService(this.getBaseContext(), 0, pocketDetectorIntent, 0);
         manager = (AlarmManager) (this.getSystemService(Context.ALARM_SERVICE));
 
         // by starting reader service, the coreServiceChain is entered until user exits
-        startService(readerIntent);
+        startService(pocketDetectorIntent);
         LocalBroadcastManager.getInstance(this).registerReceiver(coreServiceChain,
                 new IntentFilter("FinishedWork"));
         LocalBroadcastManager.getInstance(this).registerReceiver(errorHandler,
@@ -47,7 +47,10 @@ public class Meta extends Service {
             // Get extra data included in the Intent
             String status = intent.getStringExtra("status");
             System.out.println(status + " " + context);
-            if (status == "Reader finished") {
+            if (status == "PocketDetector finished") {
+                Intent readerIntent = new Intent(context, Reader.class);
+                startWakefulService(context, readerIntent);
+            } else if (status == "Reader finished") {
                 Intent cleanerIntent = new Intent(context, Cleaner.class);
                 startWakefulService(context, cleanerIntent);
             } else if (status == "Cleaner finished") {
@@ -57,6 +60,8 @@ public class Meta extends Service {
                 Intent presentInterruptIntent = new Intent(context, PresentInterrupt.class);
                 startWakefulService(context, presentInterruptIntent);
             } else if (status == "PresentInterrupt finished") {
+                setAlarm();
+            } else if (status == "PocketDetector finished in pocket") {
                 setAlarm();
             }
         }

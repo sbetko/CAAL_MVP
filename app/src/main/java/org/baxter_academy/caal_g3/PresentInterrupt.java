@@ -39,7 +39,7 @@ public class PresentInterrupt extends IntentService{
 
     public long startSitTime;
     public long sitDuration;
-    public long maxSitTime = 1000000000;
+    public long maxSitTime = 10000000;
 
     public String actString;
 

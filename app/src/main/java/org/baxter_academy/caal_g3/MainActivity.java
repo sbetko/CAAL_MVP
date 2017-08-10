@@ -18,6 +18,9 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -48,14 +51,20 @@ public class MainActivity extends AppCompatActivity {
 
         GraphView graph = (GraphView) findViewById(R.id.graph);
 
+        /**
         LogAccesser log = new LogAccesser(this);
         ArrayList<ArrayList> dataTable = log.getToday();
 
         // you can directly pass Date objects to DataPoint-Constructor
         // this will convert the Date to double via Date#getTime()
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[] {
 
-        });
+        for (int i = 0; i < dataTable.get(i).size(); i++) {
+
+            LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
+                    new DataPoint(1,1)
+            });
+        }
+         **/
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

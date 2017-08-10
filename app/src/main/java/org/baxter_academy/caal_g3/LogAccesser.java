@@ -116,7 +116,9 @@ public class LogAccesser extends ContextWrapper {
         String cIterActivityString;
         Calendar cIterCal = Calendar.getInstance();
         ArrayList<ArrayList> todayArray = new ArrayList<>();
-        ArrayList<String> cIterRow = new ArrayList<>();
+       // ArrayList<Object> cIterRow = new ArrayList<>();
+        ArrayList<Calendar> dates = new ArrayList<>();
+        ArrayList<String> activities = new ArrayList<>();
         Date cDate = new Date();
 
         // initializes calendar with date + time of start of day
@@ -145,23 +147,19 @@ public class LogAccesser extends ContextWrapper {
                 }
 
                 // creates new SDF with default (?) Calendar string format
-                SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+                // SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
                 // parses string date from CSV row to Calendar object
-                cIterCal.setTime(sdf.parse(cIterDateString));
+                // cIterCal.setTime(sdf.parse(cIterDateString));
 
                 // if the current CSV row's date is after the start time of day
                 if (cIterCal.after(todayCal)) {
-                    // add both the current CSV row date and activity to ArrayList
-                    cIterRow.add(cIterDateString);
-                    cIterRow.add(cIterActivityString);
-                    // and add that ArrayList as new index in separate ArrayList
-                    todayArray.add(cIterRow);
+                    // add both the current CSV row date (calendar object) and activity to respective ArrayLists
+                    dates.add(cIterCal);
+                    activities.add(cIterActivityString);
                 }
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
             e.printStackTrace();
         }
 

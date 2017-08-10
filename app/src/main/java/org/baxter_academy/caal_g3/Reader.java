@@ -28,7 +28,6 @@ public class Reader extends Service implements SensorEventListener {
 
     // stuff for sensor calls
     private SensorManager sensorManager;
-    private Sensor accelerometer;
 
     // variables for sensor data
     // sets up file object for storing accelerometer data
@@ -47,6 +46,7 @@ public class Reader extends Service implements SensorEventListener {
         Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_SHORT).show();
         super.onCreate();
 
+        /** INITIATE RAW ACCELEROMETER DATA COLLECTION **/
         // opens file for writing
         try {
             writer = new BufferedWriter(
@@ -57,11 +57,12 @@ public class Reader extends Service implements SensorEventListener {
             e.printStackTrace();
         }
 
-        // sensor info
+        // register sensor
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this, accelerometer, sensorDelay);
     }
+
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
