@@ -39,9 +39,10 @@ public class PresentInterrupt extends IntentService{
 
     public long startSitTime;
     public long sitDuration;
-    public long maxSitTime = 10000000;
+    public long maxSitTime = 100000; //100000ms ~ 1.5 m, 1 000 000ms ~ 16m, 10 000 000ms ~ 2.7hr
 
     public String actString;
+    public String sitLine;
 
     public PresentInterrupt() {
         super("PresentInterrupt");
@@ -126,14 +127,22 @@ public class PresentInterrupt extends IntentService{
 
                     int iter = 0;
                     while (sitReader.readLine() != null) {
-                        if (iter == 0) {
-                            startSitTime = Long.parseLong(actLineSplit[1]);
+                        sitLine = sitReader.readLine();
+                        if (sitLine == null) {
+                            break;
+                        } else {
+                            String sitLineSplit[] = sitLine.split(",");
+                            if (iter == 0) {
+                                startSitTime = Long.parseLong(sitLineSplit[0]);
+                            }
+                            if (iter > 0) {
+                                sitDuration = System.currentTimeMillis() - startSitTime;
+                            }
+                            iter++;
                         }
-                        if (iter > 0) {
-                            sitDuration = System.currentTimeMillis() - startSitTime;
-                        }
-                        iter++;
                     }
+
+                    sitReader.close();
                 }
 
                 /** Check if its time to remind the user **/
