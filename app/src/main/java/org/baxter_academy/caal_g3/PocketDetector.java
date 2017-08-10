@@ -10,15 +10,16 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
-import android.os.BatteryManager;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 import android.view.Display;
 
 /**
  * Created by lyana on 27/07/2017.
+ * This service checks that the proximity sensor is not returning a far distance, that the phone
+ * is not charging, and the screen is not on. Sends local broadcast X if the phone is likely to
+ * be in someone's pocket, and local broadcast Y if likely to be in use and/or out of a pocket.
  */
 
 public class PocketDetector extends Service implements SensorEventListener {
@@ -39,13 +40,8 @@ public class PocketDetector extends Service implements SensorEventListener {
         sense = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         proximitySensor = sense.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         sense.registerListener(this, proximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
-
         this.registerReceiver(chargingReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-
         screenOn();
-
-        //REGISTER SCREEN ON LISTENER
-        //REGISTER CHARGING LISTENER
 
         System.out.println("started pocket detector******************************");
     }
